@@ -3,73 +3,534 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agente Inmobiliario</title>
+<title>Asistente Inmobiliario Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,sans-serif;background:#0a0e14;color:#e8e6e3;padding:20px}
-.container{max-width:900px;margin:0 auto}
-h1{color:#d4a574;text-align:center;margin-bottom:30px}
-.box{background:#141920;border:1px solid #252a35;border-radius:12px;padding:20px;margin:20px 0}
-input,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #252a35;background:#0a0e14;color:#e8e6e3;font-size:14px}
-button{background:#d4a574;color:#0a0e14;font-weight:600;cursor:pointer}
-button:hover{opacity:0.9}
-.msg{background:#141920;border:1px solid #252a35;padding:15px;margin:10px 0;border-radius:8px}
-.card{background:#1a1f2e;padding:15px;margin:10px 0;border-radius:8px;border-left:3px solid #d4a574}
-.card h3{margin-bottom:8px;color:#d4a574}
-.error{color:#ff6b6b}
-.success{color:#51cf66}
-textarea{width:100%;padding:12px;background:#0a0e14;border:1px solid #252a35;color:#e8e6e3;border-radius:8px;min-height:60px;font-family:inherit}
+:root {
+  --primary: #2d7dd2;
+  --primary-light: #4a9ff5;
+  --primary-dark: #1e5ba8;
+  --accent: #ff6b6b;
+  --success: #51cf66;
+  --warning: #ffd93d;
+  --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --surface: rgba(255,255,255,0.95);
+  --surface-hover: rgba(255,255,255,1);
+  --text: #2c3e50;
+  --text-light: #7f8c8d;
+  --shadow: 0 10px 40px rgba(0,0,0,0.15);
+  --shadow-hover: 0 15px 60px rgba(0,0,0,0.25);
+  --border-radius: 20px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  padding: 20px;
+  color: var(--text);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: slideDown 0.8s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header h1 {
+  font-size: 48px;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  margin-bottom: 10px;
+  letter-spacing: -1px;
+}
+
+.header p {
+  font-size: 18px;
+  color: rgba(255,255,255,0.9);
+  font-weight: 300;
+}
+
+/* CARDS */
+.card {
+  background: var(--surface);
+  border-radius: var(--border-radius);
+  padding: 30px;
+  margin-bottom: 25px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.card-icon {
+  font-size: 32px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.card-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-top: -15px;
+  margin-bottom: 20px;
+}
+
+/* TEXTAREA */
+textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 18px;
+  border: 2px solid transparent;
+  border-radius: 15px;
+  background: #f8f9fa;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: var(--text);
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(45,125,210,0.1);
+}
+
+textarea::placeholder {
+  color: #95a5a6;
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid transparent;
+  border-radius: 15px;
+  background: #f8f9fa;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text);
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(45,125,210,0.1);
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 15px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(45,125,210,0.3);
+  margin-top: 15px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(45,125,210,0.4);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* STATUS */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 15px;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.status.success {
+  background: rgba(81,207,102,0.15);
+  color: var(--success);
+  border: 2px solid var(--success);
+}
+
+.status.error {
+  background: rgba(255,107,107,0.15);
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+
+.status.info {
+  background: rgba(45,125,210,0.15);
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+/* PROPERTY CARDS */
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+  margin-top: 25px;
+}
+
+.property-card {
+  background: var(--surface);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.property-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+}
+
+.property-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  padding: 20px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.property-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: pulse 3s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.property-type {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.property-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  position: relative;
+  z-index: 1;
+}
+
+.property-location {
+  font-size: 14px;
+  opacity: 0.9;
+  position: relative;
+  z-index: 1;
+}
+
+.property-body {
+  padding: 20px;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.badge.venta {
+  background: rgba(81,207,102,0.15);
+  color: var(--success);
+  border: 2px solid var(--success);
+}
+
+.badge.renta {
+  background: rgba(45,125,210,0.15);
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.badge.ambas {
+  background: rgba(255,107,107,0.15);
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+
+.property-price {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 15px 0;
+}
+
+.property-price small {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-light);
+}
+
+.property-specs {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  padding-top: 15px;
+  border-top: 2px solid #f0f0f0;
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.spec {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ALERT */
+.alert {
+  background: rgba(255,107,107,0.1);
+  border: 2px solid var(--accent);
+  border-radius: 15px;
+  padding: 15px 20px;
+  color: var(--accent);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+/* INFO BOX */
+.info-box {
+  background: rgba(45,125,210,0.1);
+  border: 2px solid var(--primary);
+  border-radius: 15px;
+  padding: 15px 20px;
+  color: var(--primary);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 15px;
+}
+
+/* RESULTS HEADER */
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: var(--surface);
+  border-radius: var(--border-radius);
+  margin-bottom: 25px;
+  box-shadow: var(--shadow);
+}
+
+.results-count {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.results-count span {
+  color: var(--success);
+}
+
+/* LOADING */
+.loading {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background: var(--primary);
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .header h1 { font-size: 36px; }
+  .properties-grid { grid-template-columns: 1fr; }
+  .card { padding: 20px; }
+}
 </style>
 </head>
 <body>
 <div class="container">
-<h1>🏠 Agente Inmobiliario - Debug</h1>
+  
+  <div class="header">
+    <h1>🏠 Asistente Inmobiliario Pro</h1>
+    <p>Tu copiloto para encontrar el predio perfecto · En tiempo real</p>
+  </div>
 
-<div class="box">
-<h3>Paso 1: Conectar</h3>
-<input id="url" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRDLV71BFzFH90WHKcp9D0xxMu5SjeLNrHLlWoJxj74-SHEg7ZZlFORnKzOM1bgZCIsG6lF-iWOZltD/pub?gid=1657130181&single=true&output=csv">
-<button onclick="conectar()">Conectar</button>
-<div id="status"></div>
-</div>
+  <!-- PASO 1: CARGAR DATOS -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">📋</span>
+      <div>
+        <div class="card-title">Paso 1: Cargar Base de Datos</div>
+      </div>
+    </div>
+    <p class="card-subtitle">Descarga tu Google Sheets como CSV, ábrelo con Bloc de notas y pega aquí todo el contenido</p>
+    
+    <textarea id="csv" placeholder="Pega aquí el contenido completo del archivo CSV...
 
-<div class="box">
-<h3>Paso 2: Buscar</h3>
-<textarea id="q" placeholder="Escribe tu búsqueda..."></textarea>
-<button onclick="buscar()">Buscar</button>
-</div>
+Ejemplo:
+nombre,tipo,condicion,barrio,ciudad,precio_venta,precio_renta,habitaciones,baños,area
+Apartamento Central,APARTAMENTO,VENTA,Centro,Pereira,250000000,,3,2,85
+Casa Norte,CASA,AMBAS,Norte,Dosquebradas,450000000,2500000,4,3,120"></textarea>
+    
+    <button onclick="cargarDatos()">✅ Cargar Base de Datos</button>
+    <div id="status"></div>
+    
+    <div class="info-box">
+      💡 <strong>Tip:</strong> Para descargar tu CSV: Google Sheets → Archivo → Descargar → Valores separados por comas (.csv)
+    </div>
+  </div>
 
-<div id="resultados"></div>
+  <!-- PASO 2: BUSCAR -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">🔍</span>
+      <div>
+        <div class="card-title">Paso 2: Consultar Predios</div>
+      </div>
+    </div>
+    <p class="card-subtitle">Escribe en lenguaje natural lo que tu cliente necesita</p>
+    
+    <input id="q" placeholder="Ej: Apartamentos en venta en el norte bajo 300 millones..." onkeypress="if(event.key==='Enter')buscar()">
+    <button onclick="buscar()">🚀 Buscar Ahora</button>
+    
+    <div class="info-box">
+      💬 <strong>Ejemplos de consultas:</strong><br>
+      • "Casas disponibles para arriendo en Dosquebradas bajo 3 millones"<br>
+      • "Apartamentos en venta en el centro con 3 habitaciones"<br>
+      • "Locales comerciales con opción de venta y arriendo"<br>
+      • "Predios disponibles en Cuba"
+    </div>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div id="resultados"></div>
+
 </div>
 
 <script>
 let datos = [];
 
-async function conectar() {
+function cargarDatos() {
+  const csv = document.getElementById('csv').value.trim();
   const st = document.getElementById('status');
-  st.innerHTML = '<p>⏳ Conectando...</p>';
+  
+  if (!csv) {
+    st.innerHTML = '<div class="status error">⚠️ Por favor pega el contenido del CSV primero</div>';
+    return;
+  }
   
   try {
-    const url = document.getElementById('url').value;
-    const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const lineas = csv.split('\n').filter(l => l.trim());
     
-    st.innerHTML += '<p>📡 Haciendo fetch...</p>';
-    const resp = await fetch(proxy);
+    if (lineas.length < 2) {
+      throw new Error('El CSV parece estar vacío o solo tiene encabezados');
+    }
     
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    
-    st.innerHTML += '<p class="success">✅ Fetch exitoso</p>';
-    
-    const texto = await resp.text();
-    st.innerHTML += `<p>📄 Recibido: ${texto.length} caracteres</p>`;
-    
-    // Parse CSV
-    const lineas = texto.trim().split('\n');
-    st.innerHTML += `<p>📊 Líneas: ${lineas.length}</p>`;
-    
-    if (lineas.length < 2) throw new Error('CSV vacío');
-    
-    const headers = lineas[0].split(',').map(h => h.trim().toLowerCase());
-    st.innerHTML += `<p>📋 Columnas: ${headers.join(', ')}</p>`;
+    const headers = lineas[0].split(',').map(h => h.trim().toLowerCase().replace(/["']/g,''));
     
     datos = [];
     for (let i = 1; i < lineas.length; i++) {
@@ -78,17 +539,17 @@ async function conectar() {
       
       const obj = {};
       headers.forEach((h, j) => {
-        obj[h] = (vals[j] || '').trim().replace(/["']/g, '');
+        obj[h] = (vals[j] || '').trim().replace(/["']/g,'');
       });
       datos.push(obj);
     }
     
-    st.innerHTML += `<p class="success">✅ ${datos.length} predios cargados</p>`;
-    st.innerHTML += `<p>🔍 Primeros 3:</p><pre>${JSON.stringify(datos.slice(0,3), null, 2)}</pre>`;
+    st.innerHTML = `<div class="status success">✅ ¡Perfecto! Se cargaron <strong>${datos.length} predios</strong> exitosamente. Ya puedes hacer consultas abajo 👇</div>`;
+    document.getElementById('csv').value = '';
+    document.getElementById('q').focus();
     
   } catch(e) {
-    st.innerHTML += `<p class="error">❌ Error: ${e.message}</p>`;
-    console.error(e);
+    st.innerHTML = `<div class="status error">❌ Ups, hubo un problema: ${e.message}</div>`;
   }
 }
 
@@ -97,40 +558,174 @@ function buscar() {
   const q = document.getElementById('q').value.trim().toLowerCase();
   
   if (!q) {
-    res.innerHTML = '<div class="msg error">⚠️ Escribe algo</div>';
+    res.innerHTML = '<div class="card"><div class="alert">⚠️ Escribe algo para buscar, por ejemplo: "apartamentos en venta"</div></div>';
     return;
   }
   
   if (datos.length === 0) {
-    res.innerHTML = '<div class="msg error">⚠️ Primero conecta</div>';
+    res.innerHTML = '<div class="card"><div class="alert">⚠️ Primero debes cargar la base de datos en el Paso 1</div></div>';
     return;
   }
   
-  res.innerHTML = `<div class="msg">🔍 Buscando: "${q}"</div>`;
+  res.innerHTML = '<div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
   
-  // Filtro simple
-  const filtrados = datos.filter(p => {
-    const texto = JSON.stringify(p).toLowerCase();
-    return texto.includes(q);
-  });
-  
-  res.innerHTML += `<div class="msg success">📋 Encontrados: ${filtrados.length}</div>`;
-  
-  filtrados.slice(0, 10).forEach(p => {
-    const nombre = p.nombre || p.inmueble || 'Sin nombre';
-    const tipo = p.tipo || '-';
-    const ciudad = p.ciudad || p.barrio || '-';
-    const precio = p.precio_venta || p.precio_renta || '-';
+  setTimeout(() => {
+    const filtrados = filtrarPredios(q);
+    mostrarResultados(filtrados, q);
+  }, 500);
+}
+
+function filtrarPredios(query) {
+  return datos.filter(p => {
+    // Tipo de inmueble
+    if (/apartamento|apto|apt/i.test(query) && !/apartamento|apto|apt/i.test(p.tipo || '')) return false;
+    if (/casa/i.test(query) && !/casa/i.test(p.tipo || '')) return false;
+    if (/local/i.test(query) && !/local/i.test(p.tipo || '')) return false;
+    if (/oficina/i.test(query) && !/oficina/i.test(p.tipo || '')) return false;
+    if (/lote|terreno/i.test(query) && !/lote|terreno/i.test(p.tipo || '')) return false;
+    if (/bodega/i.test(query) && !/bodega/i.test(p.tipo || '')) return false;
     
-    res.innerHTML += `
+    // Condición (venta/renta/ambas)
+    const cond = (p.condicion || p.condición || '').toLowerCase();
+    if (/venta|compra/i.test(query) && !cond.includes('venta') && cond !== 'ambas') return false;
+    if (/rent|arriendo|alquil/i.test(query) && !cond.includes('rent') && !cond.includes('arriendo') && cond !== 'ambas') return false;
+    
+    // Ubicación
+    const locMatch = query.match(/en ([a-záéíóúñ\s]+?)(?:\s|,|bajo|con|$)/i);
+    if (locMatch) {
+      const loc = locMatch[1].trim().toLowerCase();
+      const barrio = (p.barrio || '').toLowerCase();
+      const ciudad = (p.ciudad || '').toLowerCase();
+      if (!barrio.includes(loc) && !ciudad.includes(loc)) return false;
+    }
+    
+    // Precio máximo
+    const priceMatch = query.match(/(?:bajo|hasta|máximo|max)\s*(\d+)\s*(m|mill|millon)/gi);
+    if (priceMatch) {
+      const maxPrice = parseFloat(priceMatch[0].replace(/[^\d]/g,'')) * 1000000;
+      const precio = parseFloat(String(p.precio_venta || p.precio_renta || '0').replace(/[^\d]/g,''));
+      if (precio > maxPrice) return false;
+    }
+    
+    // Habitaciones
+    const habMatch = query.match(/(\d+)\s*(hab|habitacion|cuarto|alcoba)/i);
+    if (habMatch) {
+      const minHab = parseInt(habMatch[1]);
+      const hab = parseInt(p.habitaciones || 0);
+      if (hab < minHab) return false;
+    }
+    
+    // Estado disponible
+    if (/disponible/i.test(query)) {
+      const estado = (p.estado || '').toLowerCase();
+      if (!estado.includes('disponible')) return false;
+    }
+    
+    return true;
+  });
+}
+
+function mostrarResultados(predios, query) {
+  const res = document.getElementById('resultados');
+  
+  if (predios.length === 0) {
+    res.innerHTML = `
       <div class="card">
-        <h3>${nombre}</h3>
-        <p><strong>Tipo:</strong> ${tipo}</p>
-        <p><strong>Ubicación:</strong> ${ciudad}</p>
-        <p><strong>Precio:</strong> $${precio}</p>
+        <div class="alert">
+          🔍 No encontré predios que coincidan con "<strong>${query}</strong>"
+        </div>
+        <p style="color:var(--text-light);margin-top:15px">💡 <strong>Intenta con:</strong></p>
+        <ul style="margin-top:10px;padding-left:20px;color:var(--text-light)">
+          <li>Términos más generales (ej: "apartamentos" en vez de "apartamentos de lujo")</li>
+          <li>Otra ubicación o rango de precios</li>
+          <li>Verificar que la base de datos tenga predios con esas características</li>
+        </ul>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = `
+    <div class="results-header">
+      <div class="results-count">
+        <span>${predios.length}</span> ${predios.length === 1 ? 'predio encontrado' : 'predios encontrados'} 🎉
+      </div>
+    </div>
+    <div class="properties-grid">
+  `;
+  
+  predios.slice(0, 50).forEach(p => {
+    const nombre = p.nombre || p.inmueble || 'Sin nombre';
+    const tipo = p.tipo || 'Inmueble';
+    const barrio = p.barrio || '';
+    const ciudad = p.ciudad || '';
+    const ubicacion = [barrio, ciudad].filter(Boolean).join(', ') || 'Ubicación no especificada';
+    
+    const cond = (p.condicion || p.condición || '').toLowerCase();
+    let badge = '';
+    let condText = '';
+    
+    if (cond === 'ambas') {
+      badge = '<span class="badge ambas">💰 Venta + 🔑 Arriendo</span>';
+      condText = 'VENTA Y ARRIENDO';
+    } else if (cond.includes('venta')) {
+      badge = '<span class="badge venta">💰 En Venta</span>';
+      condText = 'VENTA';
+    } else {
+      badge = '<span class="badge renta">🔑 En Arriendo</span>';
+      condText = 'ARRIENDO';
+    }
+    
+    const precioVenta = p.precio_venta ? `<div class="property-price">$${formatNum(p.precio_venta)} <small>venta</small></div>` : '';
+    const precioRenta = p.precio_renta ? `<div class="property-price">$${formatNum(p.precio_renta)} <small>/mes</small></div>` : '';
+    
+    const emoji = getEmoji(tipo);
+    
+    const specs = [];
+    if (p.habitaciones) specs.push(`<span class="spec">🛏️ ${p.habitaciones} hab</span>`);
+    if (p.baños || p.banos) specs.push(`<span class="spec">🚿 ${p.baños || p.banos} baños</span>`);
+    if (p.area || p.área) specs.push(`<span class="spec">📐 ${p.area || p.área} m²</span>`);
+    
+    html += `
+      <div class="property-card">
+        <div class="property-header">
+          <div class="property-type">${emoji}</div>
+          <div class="property-name">${nombre}</div>
+          <div class="property-location">📍 ${ubicacion}</div>
+        </div>
+        <div class="property-body">
+          <div class="badges">${badge}</div>
+          ${precioVenta}
+          ${precioRenta}
+          ${specs.length > 0 ? `<div class="property-specs">${specs.join('')}</div>` : ''}
+        </div>
       </div>
     `;
   });
+  
+  html += '</div>';
+  res.innerHTML = html;
+  
+  // Scroll suave a resultados
+  setTimeout(() => {
+    res.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function getEmoji(tipo) {
+  const t = (tipo || '').toLowerCase();
+  if (t.includes('apto') || t.includes('apartamento')) return '🏢';
+  if (t.includes('casa')) return '🏡';
+  if (t.includes('local')) return '🏪';
+  if (t.includes('oficina')) return '🏢';
+  if (t.includes('lote') || t.includes('terreno')) return '🌳';
+  if (t.includes('bodega')) return '🏭';
+  return '🏠';
+}
+
+function formatNum(val) {
+  const n = parseFloat(String(val).replace(/[^\d.]/g,''));
+  return isNaN(n) ? val : n.toLocaleString('es-CO');
 }
 </script>
 </body>

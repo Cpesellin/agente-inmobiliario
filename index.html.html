@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente Inmobiliario</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#0a0e14;color:#e8e6e3;padding:20px}
+.container{max-width:900px;margin:0 auto}
+h1{color:#d4a574;text-align:center;margin-bottom:30px}
+.box{background:#141920;border:1px solid #252a35;border-radius:12px;padding:20px;margin:20px 0}
+input,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #252a35;background:#0a0e14;color:#e8e6e3;font-size:14px}
+button{background:#d4a574;color:#0a0e14;font-weight:600;cursor:pointer}
+button:hover{opacity:0.9}
+.msg{background:#141920;border:1px solid #252a35;padding:15px;margin:10px 0;border-radius:8px}
+.card{background:#1a1f2e;padding:15px;margin:10px 0;border-radius:8px;border-left:3px solid #d4a574}
+.card h3{margin-bottom:8px;color:#d4a574}
+.error{color:#ff6b6b}
+.success{color:#51cf66}
+textarea{width:100%;padding:12px;background:#0a0e14;border:1px solid #252a35;color:#e8e6e3;border-radius:8px;min-height:60px;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🏠 Agente Inmobiliario - Debug</h1>
+
+<div class="box">
+<h3>Paso 1: Conectar</h3>
+<input id="url" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRDLV71BFzFH90WHKcp9D0xxMu5SjeLNrHLlWoJxj74-SHEg7ZZlFORnKzOM1bgZCIsG6lF-iWOZltD/pub?gid=1657130181&single=true&output=csv">
+<button onclick="conectar()">Conectar</button>
+<div id="status"></div>
+</div>
+
+<div class="box">
+<h3>Paso 2: Buscar</h3>
+<textarea id="q" placeholder="Escribe tu búsqueda..."></textarea>
+<button onclick="buscar()">Buscar</button>
+</div>
+
+<div id="resultados"></div>
+</div>
+
+<script>
+let datos = [];
+
+async function conectar() {
+  const st = document.getElementById('status');
+  st.innerHTML = '<p>⏳ Conectando...</p>';
+  
+  try {
+    const url = document.getElementById('url').value;
+    const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    
+    st.innerHTML += '<p>📡 Haciendo fetch...</p>';
+    const resp = await fetch(proxy);
+    
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    
+    st.innerHTML += '<p class="success">✅ Fetch exitoso</p>';
+    
+    const texto = await resp.text();
+    st.innerHTML += `<p>📄 Recibido: ${texto.length} caracteres</p>`;
+    
+    // Parse CSV
+    const lineas = texto.trim().split('\n');
+    st.innerHTML += `<p>📊 Líneas: ${lineas.length}</p>`;
+    
+    if (lineas.length < 2) throw new Error('CSV vacío');
+    
+    const headers = lineas[0].split(',').map(h => h.trim().toLowerCase());
+    st.innerHTML += `<p>📋 Columnas: ${headers.join(', ')}</p>`;
+    
+    datos = [];
+    for (let i = 1; i < lineas.length; i++) {
+      const vals = lineas[i].split(',');
+      if (vals.length < 2) continue;
+      
+      const obj = {};
+      headers.forEach((h, j) => {
+        obj[h] = (vals[j] || '').trim().replace(/["']/g, '');
+      });
+      datos.push(obj);
+    }
+    
+    st.innerHTML += `<p class="success">✅ ${datos.length} predios cargados</p>`;
+    st.innerHTML += `<p>🔍 Primeros 3:</p><pre>${JSON.stringify(datos.slice(0,3), null, 2)}</pre>`;
+    
+  } catch(e) {
+    st.innerHTML += `<p class="error">❌ Error: ${e.message}</p>`;
+    console.error(e);
+  }
+}
+
+function buscar() {
+  const res = document.getElementById('resultados');
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  
+  if (!q) {
+    res.innerHTML = '<div class="msg error">⚠️ Escribe algo</div>';
+    return;
+  }
+  
+  if (datos.length === 0) {
+    res.innerHTML = '<div class="msg error">⚠️ Primero conecta</div>';
+    return;
+  }
+  
+  res.innerHTML = `<div class="msg">🔍 Buscando: "${q}"</div>`;
+  
+  // Filtro simple
+  const filtrados = datos.filter(p => {
+    const texto = JSON.stringify(p).toLowerCase();
+    return texto.includes(q);
+  });
+  
+  res.innerHTML += `<div class="msg success">📋 Encontrados: ${filtrados.length}</div>`;
+  
+  filtrados.slice(0, 10).forEach(p => {
+    const nombre = p.nombre || p.inmueble || 'Sin nombre';
+    const tipo = p.tipo || '-';
+    const ciudad = p.ciudad || p.barrio || '-';
+    const precio = p.precio_venta || p.precio_renta || '-';
+    
+    res.innerHTML += `
+      <div class="card">
+        <h3>${nombre}</h3>
+        <p><strong>Tipo:</strong> ${tipo}</p>
+        <p><strong>Ubicación:</strong> ${ciudad}</p>
+        <p><strong>Precio:</strong> $${precio}</p>
+      </div>
+    `;
+  });
+}
+</script>
+</body>
+</html>

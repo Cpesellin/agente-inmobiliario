@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente Inmobiliario</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e14;--surface:#141920;--border:#252a35;--gold:#d4a574;--text:#e8e6e3;--muted:#7a8099}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);padding:20px}
+.container{max-width:900px;margin:0 auto}
+header{text-align:center;padding:30px 0;border-bottom:1px solid var(--border)}
+h1{font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);margin-bottom:8px}
+.subtitle{color:var(--muted);font-size:14px}
+.config{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0}
+.config h3{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:16px}
+.input-group{margin-bottom:16px}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+input,select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;font-family:inherit}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+button{width:100%;background:linear-gradient(135deg,var(--gold),#c99557);border:none;border-radius:8px;padding:12px;color:#0a0e14;font-weight:600;cursor:pointer}
+button:hover{opacity:.9}
+.status{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;background:var(--surface);border:1px solid var(--border);margin-top:12px}
+.status.connected{border-color:#4ade80;color:#4ade80}
+.chat{margin:24px 0;min-height:300px}
+.msg{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+.msg.user{background:rgba(212,165,116,.1);border-color:rgba(212,165,116,.3)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:border-color .2s}
+.card:hover{border-color:var(--gold)}
+.card h4{font-size:16px;margin-bottom:8px}
+.card .loc{font-size:13px;color:var(--muted);margin-bottom:8px}
+.card .price{font-size:18px;font-weight:600;color:var(--gold);margin-top:8px}
+.badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;margin-right:6px}
+.badge.venta{background:rgba(74,222,128,.2);color:#4ade80}
+.badge.renta{background:rgba(96,165,250,.2);color:#60a5fa}
+.badge.ambas{background:rgba(168,85,247,.2);color:#a855f7}
+.input-bar{position:sticky;bottom:0;background:var(--bg);padding:20px 0}
+textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;color:var(--text);font-family:inherit;font-size:14px;resize:none;min-height:50px}
+textarea:focus{outline:none;border-color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🏠 Agente Inmobiliario</h1>
+<p class="subtitle">Búsqueda instantánea en tiempo real</p>
+</header>
+<div class="config">
+<h3>⚙ Configuración</h3>
+<div class="input-group">
+<label>URL de Google Sheets (CSV público)</label>
+<input type="text" id="url" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRDLV71BFzFH90WHKcp9D0xxMu5SjeLNrHLlWoJxj74-SHEg7ZZlFORnKzOM1bgZCIsG6lF-iWOZltD/pub?gid=1657130181&single=true&output=csv">
+</div>
+<button onclick="connect()">🔗 Conectar y cargar datos</button>
+<span class="status" id="st">Sin conectar</span>
+</div>
+<div class="chat" id="chat"></div>
+<div class="input-bar">
+<textarea id="q" placeholder="Ej: apartamentos en venta en el norte bajo 300 millones..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();search()}"></textarea>
+<button onclick="search()" style="margin-top:12px">🔍 Buscar</button>
+</div>
+</div>
+<script>
+let data=[];
+async function connect(){
+const u=document.getElementById('url').value.trim();
+const s=document.getElementById('st');
+s.textContent='Conectando...';s.className='status';
+try{
+const r=await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`);
+const t=await r.text();
+data=t.trim().split('\n').slice(1).map(l=>{
+const v=l.split(',');
+return{tipo:v[1],condicion:v[2],barrio:v[3],ciudad:v[4],precio_venta:v[5],precio_renta:v[6],habitaciones:v[7],banos:v[8],area:v[9],nombre:v[0]};
+});
+s.textContent=`✅ ${data.length} predios`;s.className='status connected';
+addMsg('agent',`Conexión exitosa. <strong>${data.length} predios</strong> cargados.<br>Ejemplos:<br>• Apartamentos en venta<br>• Casas bajo 3 millones`);
+}catch(e){s.textContent='❌ Error';addMsg('agent',`Error: ${e.message}`);}
+}
+function search(){
+const q=document.getElementById('q').value.trim().toLowerCase();
+if(!q)return;
+document.getElementById('q').value='';
+addMsg('user',q);
+if(!data.length){addMsg('agent','⚠️ Conecta primero');return;}
+let f=data.filter(p=>{
+if(/apto|apartamento/i.test(q)&&!/apto|apartamento/i.test(p.tipo||''))return false;
+if(/casa/i.test(q)&&!/casa/i.test(p.tipo||''))return false;
+const c=(p.condicion||'').toLowerCase();
+if(/venta/i.test(q)&&!c.includes('venta')&&c!=='ambas')return false;
+if(/rent|arriendo/i.test(q)&&!c.includes('rent')&&!c.includes('arriendo')&&c!=='ambas')return false;
+const m=q.match(/en ([a-záéíóúñ\s]+?)(?:\s|,|$)/i);
+if(m){
+const loc=m[1].toLowerCase();
+if(!((p.barrio||'').toLowerCase().includes(loc)||(p.ciudad||'').toLowerCase().includes(loc)))return false;
+}
+const pm=q.match(/(\d+)\s*(m|mill)/gi);
+if(pm){
+const max=parseFloat(pm[0].replace(/[^\d]/g,''))*1e6;
+const pr=parseFloat(String(p.precio_venta||p.precio_renta||'').replace(/[^\d]/g,''));
+if(pr>max)return false;
+}
+return true;
+});
+if(!f.length){addMsg('agent','🔍 No encontré predios');return;}
+let h=`<strong>📋 ${f.length} predio(s)</strong><div class="grid">`;
+f.slice(0,20).forEach(p=>{
+const c=(p.condicion||'').toLowerCase();
+const b=c==='ambas'?'<span class="badge ambas">Venta+Renta</span>':c.includes('venta')?'<span class="badge venta">Venta</span>':'<span class="badge renta">Renta</span>';
+h+=`<div class="card"><h4>${p.nombre||'Sin nombre'}</h4><div class="loc">📍 ${[p.barrio,p.ciudad].filter(Boolean).join(', ')}</div>${b}<div class="price">$${fmt(p.precio_venta||p.precio_renta||'0')}</div><div style="font-size:12px;color:var(--muted);margin-top:8px">${p.habitaciones?`🛏 ${p.habitaciones}`:''} ${p.banos?`🚿 ${p.banos}`:''} ${p.area?`📐 ${p.area}`:''}</div></div>`;
+});
+h+='</div>';
+addMsg('agent',h);
+}
+function addMsg(r,h){
+const d=document.createElement('div');
+d.className=`msg ${r}`;
+d.innerHTML=h;
+document.getElementById('chat').appendChild(d);
+}
+function fmt(v){
+const n=parseFloat(String(v).replace(/[^\d.]/g,''));
+return isNaN(n)?v:n.toLocaleString('es-CO');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Inmobiliaria House · Propiedades</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,600;0,700;0,900;1,600;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#ffffff;
+  --g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g300:#cbd5e1;
+  --g400:#94a3b8;--g500:#64748b;--g600:#475569;--g700:#334155;--g800:#1e293b;--g900:#0f172a;
+  --b50:#eff6ff;--b100:#dbeafe;--b200:#bfdbfe;--b300:#93c5fd;
+  --b400:#60a5fa;--b500:#3b82f6;--b600:#2563eb;--b700:#1d4ed8;--b800:#1e40af;--b900:#1e3a8a;
+  --green:#10b981;--greenbg:#ecfdf5;--greenborder:rgba(16,185,129,0.2);
+  --red:#ef4444;--redbg:#fef2f2;--redborder:rgba(239,68,68,0.2);
+  --gold:#f59e0b;--goldbg:#fffbeb;--goldborder:rgba(245,158,11,0.2);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04);
+  --shadow:0 4px 16px rgba(0,0,0,0.07),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.10);
+  --r:14px;--r-sm:8px;--r-lg:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--g50);color:var(--g800);min-height:100vh;overflow-x:hidden}
+
+/* ══ LOGIN SCREEN ══ */
+.login-screen{
+  position:fixed;inset:0;z-index:999;
+  background:linear-gradient(145deg,var(--b900) 0%,var(--b700) 60%,var(--b500) 100%);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.login-screen::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M40 0L0 40 40 80 80 40z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.login-box{
+  background:white;border-radius:24px;padding:40px 36px;
+  width:100%;max-width:400px;
+  box-shadow:0 32px 80px rgba(0,0,0,0.35);
+  position:relative;z-index:1;
+  animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn{from{opacity:0;transform:scale(0.88) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.login-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px}
+.login-logo-txt{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--g800)}
+.login-logo-sub{font-size:11px;color:var(--b600);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-top:1px}
+.login-title{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--g900);text-align:center;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--g500);text-align:center;margin-bottom:28px}
+.login-field{margin-bottom:14px}
+.login-label{display:block;font-size:12px;font-weight:700;color:var(--g600);letter-spacing:0.5px;margin-bottom:6px;text-transform:uppercase}
+.login-input{
+  width:100%;padding:13px 16px;
+  border:1.5px solid var(--g200);border-radius:10px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--g800);
+  background:var(--g50);transition:all 0.2s;outline:none;
+}
+.login-input:focus{border-color:var(--b500);background:white;box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+.login-btn{
+  width:100%;padding:14px;margin-top:8px;
+  background:linear-gradient(135deg,var(--b600),var(--b700));
+  color:white;border:none;border-radius:10px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 4px 16px rgba(37,99,235,0.35);
+}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(37,99,235,0.4)}
+.login-btn:active{transform:translateY(0)}
+.login-error{
+  display:none;margin-top:12px;padding:10px 14px;
+  background:var(--redbg);border:1px solid var(--redborder);border-radius:8px;
+  font-size:13px;color:var(--red);text-align:center;font-weight:600;
+}
+.login-hint{font-size:11px;color:var(--g400);text-align:center;margin-top:16px;line-height:1.6}
+
+/* ══ MAIN APP (oculto hasta login) ══ */
+.main-app{display:block}
+.main-app.visible{display:block}
+
+/* ══ HEADER ══ */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,0.97);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--g200);
+  box-shadow:var(--shadow-sm);
+}
+.nav{max-width:1200px;margin:0 auto;padding:0 20px;height:62px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-svg{width:38px;height:38px;flex-shrink:0}
+.logo-texts{display:flex;flex-direction:column;line-height:1}
+.logo-main{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--g900)}
+.logo-sub{font-size:9px;font-weight:700;color:var(--b600);letter-spacing:2.5px;text-transform:uppercase;margin-top:2px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.live-badge{display:flex;align-items:center;gap:5px;background:var(--greenbg);border:1px solid var(--greenborder);border-radius:20px;padding:5px 11px;font-size:11px;font-weight:700;color:var(--green)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.logout-btn{display:flex;align-items:center;gap:5px;background:var(--g100);border:1px solid var(--g200);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--g600);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s}
+.logout-btn:hover{background:var(--redbg);color:var(--red);border-color:var(--redborder)}
+
+/* ══ SEARCH BAR TOP ══ */
+.search-top{background:white;border-bottom:1px solid var(--g200);box-shadow:var(--shadow-sm)}
+.search-top-inner{max-width:1200px;margin:0 auto;padding:14px 20px}
+.sinput-wrap{position:relative}
+.sinput{
+  width:100%;padding:13px 52px 13px 46px;
+  border:2px solid var(--g200);border-radius:12px;
+  background:var(--g50);color:var(--g800);
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;
+  transition:all 0.2s;
+}
+.sinput:focus{outline:none;border-color:var(--b500);background:white;box-shadow:0 0 0 4px rgba(59,130,246,0.1)}
+.sinput::placeholder{color:var(--g400)}
+.sico-left{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:17px;pointer-events:none;color:var(--g400)}
+.sgo{
+  position:absolute;right:7px;top:50%;transform:translateY(-50%);
+  background:var(--b600);border:none;border-radius:8px;
+  width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:white;font-size:16px;transition:all 0.2s;
+}
+.sgo:hover{background:var(--b700)}
+
+/* ══ STATUS BAR ══ */
+.status-bar{background:white;border-bottom:1px solid var(--g100)}
+.status-inner{max-width:1200px;margin:0 auto;padding:8px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sbadge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.sb-ok{background:var(--greenbg);color:var(--green);border:1px solid var(--greenborder)}
+.sb-load{background:var(--b50);color:var(--b700);border:1px solid var(--b200)}
+.sb-err{background:var(--redbg);color:var(--red);border:1px solid var(--redborder)}
+.sb-spin{display:inline-block;animation:spin 1s linear infinite;font-style:normal}
+@keyframes spin{to{transform:rotate(360deg)}}
+#status-time{font-size:11px;color:var(--g400)}
+.reload-btn{margin-left:auto;display:none;align-items:center;gap:5px;background:var(--b600);color:white;border:none;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s}
+.reload-btn:hover{background:var(--b700)}
+
+/* ══ HERO ══ */
+.hero{
+  background:linear-gradient(155deg,var(--b900) 0%,var(--b700) 50%,var(--b600) 100%);
+  padding:48px 20px 48px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+.hero-inner{position:relative;z-index:1;max-width:620px;margin:0 auto}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:5px 14px;font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.9);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(28px,6vw,50px);font-weight:900;color:white;line-height:1.1;letter-spacing:-1px;margin-bottom:10px}
+.hero h1 em{font-style:italic;color:var(--b200)}
+.hero-sub{font-size:14px;color:rgba(255,255,255,0.7);margin-bottom:32px;font-weight:400}
+.stats-row{display:flex;justify-content:center;flex-wrap:wrap;gap:0;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:var(--r);overflow:hidden;max-width:480px;margin:0 auto}
+.stat{flex:1;min-width:100px;padding:16px 10px;border-right:1px solid rgba(255,255,255,0.1);text-align:center}
+.stat:last-child{border-right:none}
+.stat-n{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:white;line-height:1}
+.stat-l{font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+
+/* ══ APP ══ */
+.app{max-width:1200px;margin:0 auto;padding:20px 16px 80px}
+
+/* FILTROS CARD */
+.card{background:white;border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:16px}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:12px}
+.ch-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--b50);color:var(--b600)}
+.ch-title{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--g800)}
+.ch-sub{font-size:11.5px;color:var(--g400);margin-top:1px}
+.card-body{padding:16px 20px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fsec{background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:13px}
+.fsec.full{grid-column:1/-1}
+.flabel{font-size:10px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--g500);margin-bottom:9px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:6px 13px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--g200);background:white;color:var(--g600);transition:all 0.15s;user-select:none;white-space:nowrap}
+.chip:hover{border-color:var(--b400);color:var(--b600);background:var(--b50)}
+.chip.on{border-color:var(--b500);color:var(--b700);background:var(--b50)}
+.chip.on.cg{border-color:var(--green);color:#065f46;background:var(--greenbg)}
+.chip.on.co{border-color:var(--gold);color:#92400e;background:var(--goldbg)}
+.chip.on.cp{border-color:#8b5cf6;color:#5b21b6;background:#f5f3ff}
+.atags{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px;min-height:4px}
+.atag{display:inline-flex;align-items:center;gap:4px;background:var(--b50);border:1px solid var(--b200);color:var(--b700);border-radius:20px;padding:3px 10px;font-size:11.5px;font-weight:700}
+.atag .x{cursor:pointer;opacity:0.5;font-size:11px;margin-left:2px;transition:opacity 0.15s}
+.atag .x:hover{opacity:1}
+.btn-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 20px;border:none;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;white-space:nowrap;flex:1}
+.btn-primary{background:var(--b600);color:white;box-shadow:0 2px 10px rgba(37,99,235,0.3)}
+.btn-primary:hover{background:var(--b700);transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,99,235,0.4)}
+.btn-ghost{background:var(--g100);color:var(--g700);border:1px solid var(--g200);flex:0 0 auto}
+.btn-ghost:hover{background:var(--g200)}
+
+/* ══ RESULTS ══ */
+.rhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.rcount{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--g800)}
+.rcount b{color:var(--b600)}
+.rsort{font-size:11px;color:var(--g500);background:white;border:1px solid var(--g200);padding:5px 11px;border-radius:7px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+
+/* ══ PROPERTY CARD ══ */
+.pc{background:white;border:1px solid var(--g200);border-radius:var(--r);overflow:hidden;transition:all 0.25s;animation:fadeUp 0.35s ease both;box-shadow:var(--shadow-sm)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.pc:hover{border-color:var(--b300);transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.pctop{padding:16px 18px;position:relative;overflow:hidden;min-height:90px}
+.pctop::after{content:'';position:absolute;bottom:-25px;right:-25px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,0.1)}
+.pctop.tv{background:linear-gradient(135deg,var(--b800),var(--b600))}
+.pctop.ta{background:linear-gradient(135deg,#065f46,#059669)}
+.pctop.tb{background:linear-gradient(135deg,#7c2d12,#c2410c)}
+.pctop-type{font-size:9.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);position:relative;z-index:1;margin-bottom:4px}
+.pc-emoji{font-size:20px;position:relative;z-index:1;margin-bottom:4px}
+.pc-city-main{font-size:15px;font-weight:800;color:white;line-height:1.2;position:relative;z-index:1;margin-bottom:3px}
+.pc-city-sub{font-size:11.5px;color:rgba(255,255,255,0.7);position:relative;z-index:1}
+.pc-cod{position:absolute;top:11px;right:11px;font-size:10px;background:rgba(0,0,0,0.3);color:rgba(255,255,255,0.9);padding:2px 8px;border-radius:5px;font-weight:700;z-index:1}
+.pcbody{padding:13px 15px}
+.mods{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+.mbadge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:800}
+.mbv{background:var(--b50);color:var(--b700);border:1px solid var(--b200)}
+.mba{background:var(--greenbg);color:#065f46;border:1px solid var(--greenborder)}
+.mbok{background:var(--greenbg);color:#065f46;border:1px solid var(--greenborder)}
+.pblock{background:var(--g50);border-radius:8px;padding:10px 12px;margin:7px 0;border:1px solid var(--g100)}
+.pventa{font-family:'Fraunces',serif;font-size:21px;font-weight:700;color:var(--b700);line-height:1}
+.pventa small{font-size:10.5px;font-weight:400;color:var(--g500);font-family:'Plus Jakarta Sans',sans-serif}
+.parriendo{font-size:14px;font-weight:700;color:#065f46;margin-top:4px}
+.parriendo small{font-size:10.5px;font-weight:400;color:var(--g500)}
+.admon{font-size:11px;color:var(--g400);margin-top:3px}
+.cross-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700;margin-top:4px}
+.cross-v{background:var(--b50);color:var(--b700);border:1px solid var(--b200)}
+.cross-a{background:var(--greenbg);color:#065f46;border:1px solid var(--greenborder)}
+.specs{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px;padding-top:9px;border-top:1px solid var(--g100)}
+.spec{font-size:11px;color:var(--g600);background:var(--g50);padding:3px 8px;border-radius:5px;border:1px solid var(--g200)}
+.dalert{background:var(--goldbg);border:1px solid var(--goldborder);border-radius:7px;padding:7px 10px;font-size:11px;color:#92400e;margin-top:7px;line-height:1.5}
+.asesor{font-size:11.5px;color:var(--g500);margin-top:7px;display:flex;align-items:center;gap:4px}
+
+/* BOTÓN VER MÁS */
+.ver-mas-btn{
+  width:100%;margin-top:10px;padding:9px 14px;
+  background:white;border:1.5px solid var(--b200);
+  border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:12.5px;font-weight:700;color:var(--b600);
+  cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.ver-mas-btn:hover{background:var(--b50);border-color:var(--b400)}
+
+/* ══ MODAL VER MÁS ══ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(15,23,42,0.6);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  animation:fadeIn 0.2s ease;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{
+  background:white;border-radius:20px;
+  width:100%;max-width:560px;
+  max-height:90vh;overflow-y:auto;
+  box-shadow:0 32px 80px rgba(0,0,0,0.3);
+  animation:slideUp 0.25s cubic-bezier(0.34,1.3,0.64,1);
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-header{padding:20px 22px 16px;border-bottom:1px solid var(--g100);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:sticky;top:0;background:white;z-index:1;border-radius:20px 20px 0 0}
+.modal-title{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--g900);line-height:1.2}
+.modal-subtitle{font-size:12px;color:var(--g500);margin-top:3px}
+.modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--g200);background:var(--g50);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--g500);transition:all 0.2s;flex-shrink:0}
+.modal-close:hover{background:var(--redbg);color:var(--red);border-color:var(--redborder)}
+.modal-body{padding:18px 22px 22px}
+.modal-section{margin-bottom:18px}
+.modal-sec-title{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--g400);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--g100)}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modal-field{background:var(--g50);border:1px solid var(--g100);border-radius:9px;padding:10px 12px}
+.modal-field-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g400);margin-bottom:3px}
+.modal-field-value{font-size:13.5px;font-weight:600;color:var(--g800)}
+.modal-field.full{grid-column:1/-1}
+.modal-field.highlight{background:var(--b50);border-color:var(--b200)}
+.modal-field.highlight .modal-field-value{color:var(--b700);font-family:'Fraunces',serif;font-size:20px;font-weight:700}
+.modal-obs{background:var(--g50);border:1px solid var(--g200);border-radius:9px;padding:12px 14px;font-size:13px;color:var(--g700);line-height:1.6;border-left:3px solid var(--b400)}
+
+/* ══ EMPTY / LOADER ══ */
+.empty{text-align:center;padding:56px 20px;background:white;border:1px solid var(--g200);border-radius:var(--r)}
+.empty-ico{font-size:44px;display:block;margin-bottom:12px;opacity:0.45}
+.empty h3{font-family:'Fraunces',serif;font-size:21px;font-weight:700;color:var(--g800);margin-bottom:5px}
+.empty p{color:var(--g500);font-size:13.5px}
+.loader{text-align:center;padding:50px}
+.ldots{display:inline-flex;gap:8px;margin-bottom:10px}
+.ldot{width:9px;height:9px;border-radius:50%;background:var(--b400);animation:lb 1.2s infinite ease-in-out}
+.ldot:nth-child(1){animation-delay:-0.24s}.ldot:nth-child(2){animation-delay:-0.12s}
+@keyframes lb{0%,80%,100%{transform:scale(0.6);opacity:0.3}40%{transform:scale(1.3);opacity:1}}
+
+/* ══ FOOTER ══ */
+footer{background:white;border-top:1px solid var(--g200);padding:24px 20px;text-align:center}
+.footer-logo{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px}
+.footer-brand{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--g700)}
+.footer-sub{font-size:11.5px;color:var(--g400)}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:640px){
+  .fgrid{grid-template-columns:1fr}
+  .fsec.full{grid-column:1}
+  .pgrid{grid-template-columns:1fr}
+  .modal-grid{grid-template-columns:1fr}
+  .modal-field.full{grid-column:1}
+  .btn-row{flex-direction:column}
+  .btn-ghost{flex:1}
+  .hero{padding:36px 16px 40px}
+  .hero h1{font-size:27px}
+  .stat-n{font-size:22px}
+  .stats-row .stat{min-width:80px}
+  .logo-sub{display:none}
+  .nav{padding:0 14px}
+  .search-top-inner{padding:10px 14px}
+  .card-body,.card-head{padding:13px 14px}
+  .app{padding:14px 10px 60px}
+}
+@media(max-width:360px){
+  .stats-row{flex-direction:column}
+  .stat{border-right:none;border-bottom:1px solid rgba(255,255,255,0.1);padding:10px}
+  .stat:last-child{border-bottom:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════ -->
+<div class="login-screen" id="login-screen" style="display:none">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#3b82f6"/>
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" rx="10" fill="url(#lg1)"/>
+        <polygon points="20,7 32,18 8,18" fill="white" opacity="0.95"/>
+        <rect x="12" y="18" width="16" height="13" rx="1" fill="white" opacity="0.85"/>
+        <rect x="17" y="24" width="6" height="7" rx="1.5" fill="url(#lg1)"/>
+        <rect x="13.5" y="20" width="4" height="3.5" rx="0.8" fill="#1e40af" opacity="0.7"/>
+        <rect x="22.5" y="20" width="4" height="3.5" rx="0.8" fill="#1e40af" opacity="0.7"/>
+      </svg>
+      <div>
+        <div class="login-logo-txt">Inmobiliaria House</div>
+        <div class="login-logo-sub">Pereira · Eje Cafetero</div>
+      </div>
+    </div>
+    <div class="login-title">Bienvenido</div>
+    <div class="login-sub">Ingresa tus credenciales para acceder al portafolio</div>
+    <div class="login-field">
+      <label class="login-label">Usuario</label>
+      <input class="login-input" id="login-user" type="text" placeholder="Tu usuario" autocomplete="username" onkeypress="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="login-field">
+      <label class="login-label">Contraseña</label>
+      <input class="login-input" id="login-pass" type="password" placeholder="Tu contraseña" autocomplete="current-password" onkeypress="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Ingresar al Portafolio →</button>
+    <div class="login-error" id="login-error">Usuario o contraseña incorrectos</div>
+    <div class="login-hint">🔒 Acceso restringido · Solo personal autorizado</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════════ -->
+<div class="main-app" id="main-app">
+
+<!-- HEADER -->
+<header>
+  <div class="nav">
+    <a class="logo-wrap" href="#">
+      <svg class="logo-svg" viewBox="0 0 40 40" fill="none">
+        <defs>
+          <linearGradient id="lg2" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#3b82f6"/>
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" rx="10" fill="url(#lg2)"/>
+        <polygon points="20,7 32,18 8,18" fill="white" opacity="0.95"/>
+        <rect x="12" y="18" width="16" height="13" rx="1" fill="white" opacity="0.85"/>
+        <rect x="17" y="24" width="6" height="7" rx="1.5" fill="#1e40af"/>
+        <rect x="13.5" y="20" width="4" height="3.5" rx="0.8" fill="#1e40af" opacity="0.7"/>
+        <rect x="22.5" y="20" width="4" height="3.5" rx="0.8" fill="#1e40af" opacity="0.7"/>
+        <polyline points="28,12 33,7 33,12" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>
+        <line x1="27" y1="13" x2="33" y2="7" stroke="white" stroke-width="1.6" stroke-linecap="round" opacity="0.65"/>
+      </svg>
+      <div class="logo-texts">
+        <span class="logo-main">Inmobiliaria House</span>
+        <span class="logo-sub">Pereira · Eje Cafetero</span>
+      </div>
+    </a>
+    <div class="nav-right">
+      <div class="live-badge"><span class="live-dot"></span> En vivo</div>
+      
+    </div>
+  </div>
+</header>
+
+<!-- BÚSQUEDA ARRIBA -->
+<div class="search-top">
+  <div class="search-top-inner">
+    <div class="sinput-wrap">
+      <span class="sico-left">🔍</span>
+      <input class="sinput" id="q" placeholder="Busca por ciudad, tipo, características... ej: apto 3 hab Pereira" onkeypress="if(event.key==='Enter')buscar()">
+      <button class="sgo" onclick="buscar()">→</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="status-inner">
+    <span id="status-badge" class="sbadge sb-load"><em class="sb-spin">⟳</em> Cargando...</span>
+    <span id="status-time"></span>
+    <button class="reload-btn" id="reload-btn" onclick="iniciarCarga()">↺ Actualizar</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">🏙️ Portafolio en tiempo real</div>
+    <h1>Tu próxima <em>propiedad</em><br>te está esperando</h1>
+    <p class="hero-sub">Solo propiedades disponibles · Pereira y Eje Cafetero</p>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-n" id="hs1">—</div><div class="stat-l">Total</div></div>
+      <div class="stat"><div class="stat-n" id="hs2">—</div><div class="stat-l">Venta</div></div>
+      <div class="stat"><div class="stat-n" id="hs3">—</div><div class="stat-l">Arriendo</div></div>
+      <div class="stat"><div class="stat-n" id="hs4">—</div><div class="stat-l">Ambas</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- FILTROS -->
+  <div class="card">
+    <div class="card-head">
+      <div class="ch-icon">⚙️</div>
+      <div>
+        <div class="ch-title">Filtros de Búsqueda</div>
+        <div class="ch-sub">Selección múltiple · Solo propiedades disponibles</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="fgrid">
+        <div class="fsec">
+          <div class="flabel">Negociación</div>
+          <div class="chips">
+            <div class="chip" data-g="neg" data-v="venta" onclick="toggle(this,'cg')">💰 Venta</div>
+            <div class="chip" data-g="neg" data-v="arriendo" onclick="toggle(this)">🔑 Arriendo</div>
+            <div class="chip" data-g="neg" data-v="ambas" onclick="toggle(this,'co')">🔄 Ambas</div>
+          </div>
+        </div>
+        <div class="fsec">
+          <div class="flabel">Ciudad / Sector</div>
+          <div class="chips">
+            <div class="chip" data-g="ciu" data-v="pereira" onclick="toggle(this)">Pereira</div>
+            <div class="chip" data-g="ciu" data-v="dosquebradas" onclick="toggle(this)">Dosquebradas</div>
+            <div class="chip" data-g="ciu" data-v="santa rosa" onclick="toggle(this)">Santa Rosa</div>
+            <div class="chip" data-g="ciu" data-v="alcala" onclick="toggle(this)">Alcalá</div>
+            <div class="chip" data-g="ciu" data-v="cerritos" onclick="toggle(this)">Cerritos</div>
+          </div>
+        </div>
+        <div class="fsec full">
+          <div class="flabel">Tipo de Inmueble</div>
+          <div class="chips">
+            <div class="chip" data-g="tipo" data-v="apartamento" onclick="toggle(this)">🏢 Apartamento</div>
+            <div class="chip" data-g="tipo" data-v="aparta estudio" onclick="toggle(this)">🏠 Apartaestudio</div>
+            <div class="chip" data-g="tipo" data-v="casa" onclick="toggle(this,'cp')">🏡 Casa</div>
+            <div class="chip" data-g="tipo" data-v="casa campestre" onclick="toggle(this,'cp')">🌿 Campestre</div>
+            <div class="chip" data-g="tipo" data-v="finca" onclick="toggle(this,'cg')">🌾 Finca</div>
+            <div class="chip" data-g="tipo" data-v="local" onclick="toggle(this,'co')">🏪 Local</div>
+            <div class="chip" data-g="tipo" data-v="oficina" onclick="toggle(this)">💼 Oficina</div>
+            <div class="chip" data-g="tipo" data-v="bodega" onclick="toggle(this)">🏭 Bodega</div>
+            <div class="chip" data-g="tipo" data-v="lote" onclick="toggle(this,'cg')">🌳 Lote</div>
+            <div class="chip" data-g="tipo" data-v="penthouse" onclick="toggle(this,'co')">👑 Penthouse</div>
+          </div>
+        </div>
+        <div class="fsec">
+          <div class="flabel">Precio Arriendo</div>
+          <div class="chips">
+            <div class="chip" data-g="parr" data-v="0-1000000" onclick="toggle(this)">Hasta $1M</div>
+            <div class="chip" data-g="parr" data-v="1000000-1500000" onclick="toggle(this)">$1M–$1.5M</div>
+            <div class="chip" data-g="parr" data-v="1500000-2000000" onclick="toggle(this)">$1.5M–$2M</div>
+            <div class="chip" data-g="parr" data-v="2000000-3500000" onclick="toggle(this)">$2M–$3.5M</div>
+            <div class="chip" data-g="parr" data-v="3500000-999999999" onclick="toggle(this)">+$3.5M</div>
+          </div>
+        </div>
+        <div class="fsec">
+          <div class="flabel">Precio Venta</div>
+          <div class="chips">
+            <div class="chip" data-g="pven" data-v="0-150000000" onclick="toggle(this,'cg')">Hasta $150M</div>
+            <div class="chip" data-g="pven" data-v="150000000-300000000" onclick="toggle(this,'cg')">$150M–$300M</div>
+            <div class="chip" data-g="pven" data-v="300000000-600000000" onclick="toggle(this,'cg')">$300M–$600M</div>
+            <div class="chip" data-g="pven" data-v="600000000-9999999999" onclick="toggle(this,'cg')">+$600M</div>
+          </div>
+        </div>
+      </div>
+      <div class="atags" id="atags"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="buscar()">🔍 Buscar</button>
+        <button class="btn btn-ghost" onclick="mostrarTodo()">Ver todos</button>
+        <button class="btn btn-ghost" onclick="limpiar()">✕ Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="res"></div>
+</div>
+
+<footer>
+  <div class="footer-logo">
+    <svg width="20" height="20" viewBox="0 0 40 40" fill="none">
+      <rect width="40" height="40" rx="10" fill="#2563eb"/>
+      <polygon points="20,7 32,18 8,18" fill="white"/>
+      <rect x="12" y="18" width="16" height="13" rx="1" fill="white" opacity="0.85"/>
+      <rect x="17" y="24" width="6" height="7" rx="1.5" fill="#2563eb"/>
+    </svg>
+    <span class="footer-brand">Inmobiliaria House</span>
+  </div>
+  <div class="footer-sub">Solo propiedades disponibles · Portafolio en tiempo real</div>
+</footer>
+
+</div><!-- /main-app -->
+
+<!-- ══════════════════════════════════════════
+     MODAL DETALLE
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" style="display:none" onclick="if(event.target===this)cerrarModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">Detalle de Propiedad</div>
+        <div class="modal-subtitle" id="modal-subtitle"></div>
+      </div>
+      <button class="modal-close" onclick="cerrarModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+// ─── USUARIOS ───────────────────────────────
+// Para agregar más usuarios simplemente añade { user:'nombre', pass:'clave' }
+const USUARIOS = [
+  { user: 'admin',   pass: 'house2024' },
+  { user: 'house',   pass: 'inmobiliaria' },
+  { user: 'asesor1', pass: 'pereira123' },
+];
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const p = document.getElementById('login-pass').value;
+  const ok = USUARIOS.find(x => x.user.toLowerCase()===u && x.pass===p);
+  if (ok) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-app').classList.add('visible');
+    sessionStorage.setItem('ih_logged','1');
+    sessionStorage.setItem('ih_user', ok.user);
+    iniciarCarga();
+  } else {
+    const err = document.getElementById('login-error');
+    err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+    setTimeout(()=>{ err.style.display='none'; }, 3000);
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('ih_logged');
+  sessionStorage.removeItem('ih_user');
+  location.reload();
+}
+
+// ─── CONFIG ─────────────────────────────────
+const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbxFAgHSIQzD9dYVhKi9B4fKrrigISd5G17iiJHx6UhQf3_9e3t6p53R5vOrIcDOAF6Sng/exec';
+const CSV_RAW = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDLV71BFzFH90WHKcp9D0xxMu5SjeLNrHLlWoJxj74-SHEg7ZZlFORnKzOM1bgZCIsG6lF-iWOZltD/pub?gid=1657130181&single=true&output=csv';
+
+let D = [];
+let modalData = null;
+const F = { neg:new Set(), ciu:new Set(), tipo:new Set(), parr:new Set(), pven:new Set() };
+const LABELS = {
+  neg:{venta:'💰 Venta',arriendo:'🔑 Arriendo',ambas:'🔄 Ambas'},
+  ciu:{pereira:'Pereira',dosquebradas:'Dosquebradas','santa rosa':'Santa Rosa',alcala:'Alcalá',cerritos:'Cerritos'},
+  tipo:{apartamento:'🏢 Apt',aparta_estudio:'🏠 Aptaestudio',casa:'🏡 Casa','casa campestre':'🌿 Campestre',finca:'🌾 Finca',local:'🏪 Local',oficina:'💼 Oficina',bodega:'🏭 Bodega',lote:'🌳 Lote',penthouse:'👑 Penthouse'},
+  parr:{'0-1000000':'≤$1M','1000000-1500000':'$1M-$1.5M','1500000-2000000':'$1.5M-$2M','2000000-3500000':'$2M-$3.5M','3500000-999999999':'+$3.5M'},
+  pven:{'0-150000000':'≤$150M','150000000-300000000':'$150M-$300M','300000000-600000000':'$300M-$600M','600000000-9999999999':'+$600M'}
+};
+
+// ─── CARGA ───────────────────────────────────
+async function iniciarCarga() {
+  setStatus('load','Cargando datos...');
+  document.getElementById('reload-btn').style.display='none';
+  // Apps Script
+  try {
+    const r = await fetch(APPS_SCRIPT, {cache:'no-cache'});
+    if (r.ok) { const t=await r.text(); if(t&&t.length>30&&t.includes(',')){ procesarCSV(t); return; } }
+  } catch(e){}
+  // Proxies
+  const proxies=[
+    async()=>{ const r=await fetch('https://corsproxy.io/?'+encodeURIComponent(CSV_RAW),{cache:'no-cache'}); return r.ok?r.text():null; },
+    async()=>{ const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(CSV_RAW),{cache:'no-cache'}); return r.ok?(await r.json()).contents:null; },
+    async()=>{ const r=await fetch(CSV_RAW,{cache:'no-cache'}); return r.ok?r.text():null; },
+  ];
+  for(const p of proxies){ try{ const t=await p(); if(t&&t.length>30){ procesarCSV(t); return; } }catch(e){} }
+  setStatus('err','❌ Sin conexión. Toca Actualizar para reintentar.');
+  document.getElementById('reload-btn').style.display='flex';
+}
+
+function procesarCSV(csv) {
+  try {
+    const lines = csv.split('\n').filter(l=>l.trim().length>2);
+    if(lines.length<2) throw new Error('CSV vacío');
+    const hdrs = parseCSVLine(lines[0]).map(h=>h.toLowerCase().trim().replace(/\s+/g,' ').replace(/\r/g,''));
+    D = [];
+    for(let i=1;i<lines.length;i++){
+      const vals=parseCSVLine(lines[i]);
+      if(vals.length<3) continue;
+      const obj={};
+      hdrs.forEach((h,j)=>{ obj[h]=(vals[j]||'').trim().replace(/\r/g,''); });
+      // ── FILTRO: solo DISPONIBLE ──
+      const estadoKey = hdrs.find(h=>h.includes('estado'));
+      const estadoVal = estadoKey ? (obj[estadoKey]||'').toUpperCase() : '';
+      if(estadoVal && !estadoVal.includes('DISPONIBLE')) continue;
+      if(Object.values(obj).some(v=>v.length>0)) D.push(obj);
+    }
+    if(!D.length) throw new Error('Sin registros disponibles');
+    const vs=D.filter(p=>eV(p)&&!eA2(p)).length;
+    const as=D.filter(p=>eA(p)&&!eA2(p)).length;
+    const bs=D.filter(p=>eA2(p)).length;
+    anim('hs1',D.length); anim('hs2',vs); anim('hs3',as); anim('hs4',bs);
+    const t=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+    setStatus('ok','✅ '+D.length+' propiedades disponibles');
+    document.getElementById('status-time').textContent='Actualizado '+t;
+    document.getElementById('reload-btn').style.display='flex';
+  } catch(e) {
+    setStatus('err','Error: '+e.message);
+    document.getElementById('reload-btn').style.display='flex';
+  }
+}
+
+function setStatus(t,m){
+  const el=document.getElementById('status-badge');
+  el.className='sbadge '+(t==='ok'?'sb-ok':t==='err'?'sb-err':'sb-load');
+  el.innerHTML=t==='load'?'<em class="sb-spin">⟳</em> '+m:m;
+}
+function anim(id,target){
+  const el=document.getElementById(id); let cur=0;
+  const step=Math.max(1,Math.ceil(target/25));
+  const iv=setInterval(()=>{ cur=Math.min(cur+step,target); el.textContent=cur; if(cur>=target)clearInterval(iv); },45);
+}
+function parseCSVLine(line){
+  const r=[];let cur='';let inQ=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c==='"'){inQ=!inQ;continue;}
+    if(c===','&&!inQ){r.push(cur.trim());cur='';continue;}
+    cur+=c;
+  }
+  r.push(cur.trim()); return r;
+}
+
+// ─── HELPERS ─────────────────────────────────
+const JUNK=['n/a','no aplica','no tiene','sin informacion','sin información','notiene','no dice','pendiente','sin contacto','sin informaci'];
+function get(obj,...keys){
+  for(const k of keys) for(const h of Object.keys(obj)){
+    if(h.toLowerCase().includes(k.toLowerCase())){
+      const v=(obj[h]||'').trim();
+      if(v&&!JUNK.some(j=>v.toLowerCase().startsWith(j)))return v;
+    }
+  }
+  return '';
+}
+// Columnas a ocultar SIEMPRE (dirección)
+const COLS_OCULTAS=[]; // Sin columnas ocultas - dirección visible
+
+function esCOlOculta(h){ return COLS_OCULTAS.some(c=>h.toLowerCase().includes(c)); }
+
+function negocio(p){return(get(p,'tipo de negociaci','negociaci')||'').toLowerCase();}
+function ciudad(p){return(get(p,'ubicaci','ciudad')||'').toLowerCase();}
+function tipo(p){return(get(p,'tipo de inmueble','tipo')||'').toLowerCase();}
+function eV(p){return negocio(p).includes('venta');}
+function eA(p){const n=negocio(p);return n.includes('arriendo')||n.includes('renta');}
+function eA2(p){return eV(p)&&eA(p);}
+function num(v){if(!v)return 0;const n=parseFloat(String(v).replace(/[^\d.]/g,''));return isNaN(n)?0:n;}
+function pVenta(p){return num(get(p,'precio de venta','precio venta'));}
+function pArriendo(p){return num(get(p,'precio de arriendo','precio arriendo','canon'));}
+function enRango(val,r){const[a,b]=r.split('-').map(Number);return val>=a&&val<=b;}
+
+// ─── FILTROS UI ───────────────────────────────
+function toggle(el,cc=''){
+  const g=el.dataset.g,v=el.dataset.v;
+  if(F[g].has(v)){F[g].delete(v);el.classList.remove('on','cg','co','cp');}
+  else{F[g].add(v);el.classList.add('on');if(cc)el.classList.add(cc);}
+  renderTags();
+}
+function renderTags(){
+  let h='';
+  for(const[g,s]of Object.entries(F))for(const v of s){
+    const l=LABELS[g]?.[v]||v;
+    h+='<span class="atag">'+l+'<span class="x" onclick="removeF(\''+g+'\',\''+v+'\')">✕</span></span>';
+  }
+  document.getElementById('atags').innerHTML=h;
+}
+function removeF(g,v){
+  F[g].delete(v);
+  document.querySelectorAll('.chip[data-g="'+g+'"][data-v="'+v+'"]').forEach(e=>e.classList.remove('on','cg','co','cp'));
+  renderTags();
+}
+function limpiar(){
+  for(const g of Object.keys(F))F[g].clear();
+  document.querySelectorAll('.chip').forEach(e=>e.classList.remove('on','cg','co','cp'));
+  document.getElementById('q').value='';
+  document.getElementById('atags').innerHTML='';
+  document.getElementById('res').innerHTML='';
+}
+function mostrarTodo(){
+  limpiar();
+  if(!D.length){document.getElementById('res').innerHTML='<div class="empty"><span class="empty-ico">📡</span><h3>Cargando...</h3><p>Espera un momento</p></div>';return;}
+  render(D,'',false,false);
+}
+
+// ─── BUSCAR ───────────────────────────────────
+function buscar(){
+  const res=document.getElementById('res');
+  const qv=document.getElementById('q').value.trim().toLowerCase();
+  if(!D.length){res.innerHTML='<div class="empty"><span class="empty-ico">📋</span><h3>Sin datos</h3><p>Espera que carguen las propiedades</p></div>';return;}
+  res.innerHTML='<div class="loader"><div class="ldots"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div><p style="color:var(--g500);font-size:13.5px">Buscando propiedades disponibles...</p></div>';
+  setTimeout(()=>{
+    let lista=D.filter(p=>filtrar(p,qv));
+    const hayPrecio=F.parr.size>0||F.pven.size>0||F.neg.size>0||/precio|arriendo|venta|bajo|hasta|desde|valor|\d+m/i.test(qv);
+    const esArr=F.neg.has('arriendo')||F.parr.size>0||(/arriendo|renta/i.test(qv)&&!/\bventa\b/i.test(qv));
+    if(hayPrecio){lista.sort((a,b)=>{
+      const pa=esArr?(pArriendo(a)||pVenta(a)):(pVenta(a)||pArriendo(a));
+      const pb=esArr?(pArriendo(b)||pVenta(b)):(pVenta(b)||pArriendo(b));
+      return pb-pa;
+    });}
+    render(lista,qv,hayPrecio,esArr);
+  },200);
+}
+
+function filtrar(p,qv){
+  const neg=negocio(p),ciu=ciudad(p),tip=tipo(p);
+  const pv=pVenta(p),pa=pArriendo(p);
+  const searchable=(ciu+' '+tip+' '+(get(p,'observaciones','observacion')||'')).toLowerCase();
+  if(F.neg.size>0){let ok=false;if(F.neg.has('venta')&&eV(p))ok=true;if(F.neg.has('arriendo')&&eA(p))ok=true;if(F.neg.has('ambas')&&eA2(p))ok=true;if(!ok)return false;}
+  if(F.ciu.size>0){let ok=false;for(const c of F.ciu)if(ciu.includes(c))ok=true;if(!ok)return false;}
+  if(F.tipo.size>0){
+    let ok=false;
+    for(const tv of F.tipo){
+      if(tv==='aparta estudio'&&tip.includes('aparta')&&(tip.includes('estudio')||tip.includes('studio')))ok=true;
+      else if(tv==='casa campestre'&&tip.includes('campestre'))ok=true;
+      else if(tv!=='casa campestre'&&tv!=='aparta estudio'&&tip.includes(tv))ok=true;
+    }
+    if(!ok)return false;
+  }
+  if(F.parr.size>0){if(pa<=0)return false;let ok=false;for(const r of F.parr)if(enRango(pa,r))ok=true;if(!ok)return false;}
+  if(F.pven.size>0){if(pv<=0)return false;let ok=false;for(const r of F.pven)if(enRango(pv,r))ok=true;if(!ok)return false;}
+  if(qv){
+    const CIUS=['pereira','dosquebradas','santa rosa','condina','cerritos','cuba','alcala','combia','pinares','manizales'];
+    for(const c of CIUS)if(qv.includes(c)&&!ciu.includes(c))return false;
+    if(/\bapartamento\b|apto\b/i.test(qv)&&!tip.includes('apartamento')&&!tip.includes('apto')&&!tip.includes('estudio'))return false;
+    if(/apartaestudio|aparta.?estudio/i.test(qv)&&!tip.includes('estudio'))return false;
+    if(/\bcasa\b/i.test(qv)&&!tip.includes('casa'))return false;
+    if(/campestre/i.test(qv)&&!tip.includes('campestre'))return false;
+    if(/\bfinca\b/i.test(qv)&&!tip.includes('finca'))return false;
+    if(/\blocal\b/i.test(qv)&&!tip.includes('local'))return false;
+    if(/\boficina\b/i.test(qv)&&!tip.includes('oficina'))return false;
+    if(/\blote\b|terreno/i.test(qv)&&!tip.includes('lote')&&!tip.includes('terreno'))return false;
+    if(/\bbodega\b/i.test(qv)&&!tip.includes('bodega'))return false;
+    if(/penthouse/i.test(qv)&&!tip.includes('penthouse'))return false;
+    if(/\bventa\b/i.test(qv)&&!/arriendo|renta/i.test(qv)&&!eV(p))return false;
+    if(/\barriendo\b|arrendar|alquiler/i.test(qv)&&!/\bventa\b/i.test(qv)&&!eA(p))return false;
+    const pmx=qv.match(/(?:bajo|hasta|maximo|max|menos de)\s*(\d+[\.,]?\d*)\s*(?:m|mill)?/i);
+    if(pmx){const n=parseFloat(pmx[1].replace(',','.'));const maxP=n<10000?n*1000000:n;const precio=eA(p)?(pa||pv):(pv||pa);if(precio>0&&precio>maxP)return false;}
+  }
+  return true;
+}
+
+// ─── MODAL ───────────────────────────────────
+function abrirModal(idx){
+  const p = D[idx];
+  if(!p) return;
+  const tip=get(p,'tipo de inmueble','tipo')||'Inmueble';
+  const ciu=get(p,'ubicaci','ciudad')||'';
+  document.getElementById('modal-title').textContent = tip;
+  document.getElementById('modal-subtitle').textContent = ciu ? '📍 '+ciu : 'Detalle completo de la propiedad';
+  // Construir cuerpo del modal
+  const pv=pVenta(p),pa=pArriendo(p);
+  const admon=num(get(p,'administraci','admon'));
+  let body='';
+
+  // PRECIOS
+  if(pv>0||pa>0){
+    body+='<div class="modal-section"><div class="modal-sec-title">💰 Precios</div><div class="modal-grid">';
+    if(pv>0) body+='<div class="modal-field highlight"><div class="modal-field-label">Precio de Venta</div><div class="modal-field-value">'+fmt(pv)+'</div></div>';
+    if(pa>0) body+='<div class="modal-field highlight" style="background:#ecfdf5;border-color:rgba(16,185,129,0.25)"><div class="modal-field-label">Canon de Arriendo</div><div class="modal-field-value" style="color:#065f46">'+fmtA(pa)+'/mes</div></div>';
+    if(admon>0) body+='<div class="modal-field"><div class="modal-field-label">Administración</div><div class="modal-field-value">'+fmt(admon)+'/mes</div></div>';
+    body+='</div></div>';
+  }
+
+  // CARACTERÍSTICAS
+  const specs_fields = [
+    ['tipo de inmueble','tipo','Tipo de Inmueble'],
+    ['ubicaci','ciudad','Ciudad / Municipio'],
+    ['direccion','dirección','Dirección'],
+    ['habitaciones','habitaciones','Habitaciones'],
+    ['baños','banos','Baños'],
+    ['area construida','área construida','Área Construida (m²)'],
+    ['area total','área total','Área Total (m²)'],
+    ['estrato','estrato','Estrato'],
+    ['antigüedad','antiguedad','Antigüedad'],
+    ['piso','piso','Piso'],
+    ['parqueaderos','parqueadero','Parqueaderos'],
+    ['conjunto','barrio','Conjunto / Barrio'],
+    ['tipo de negociaci','negociaci','Tipo de Negociación'],
+  ];
+  let specs_h='';
+  specs_fields.forEach(([k1,k2,label])=>{
+    const v=get(p,k1,k2);
+    if(v) specs_h+='<div class="modal-field"><div class="modal-field-label">'+label+'</div><div class="modal-field-value">'+v+'</div></div>';
+  });
+  if(specs_h) body+='<div class="modal-section"><div class="modal-sec-title">🏠 Características</div><div class="modal-grid">'+specs_h+'</div></div>';
+
+  // ASESOR
+  const asesor=get(p,'asesor responsable','asesor');
+  const tel=get(p,'telefono','celular','contacto','tel');
+  const email=get(p,'email','correo','mail');
+  const cod=get(p,'codigo','metrocuadrado','cod');
+  let contacto_h='';
+  if(asesor) contacto_h+='<div class="modal-field full"><div class="modal-field-label">Asesor Responsable</div><div class="modal-field-value">👤 '+asesor+'</div></div>';
+  if(tel) contacto_h+='<div class="modal-field"><div class="modal-field-label">Teléfono</div><div class="modal-field-value">📞 '+tel+'</div></div>';
+  if(email) contacto_h+='<div class="modal-field"><div class="modal-field-label">Email</div><div class="modal-field-value">✉️ '+email+'</div></div>';
+  if(cod) contacto_h+='<div class="modal-field"><div class="modal-field-label">Código</div><div class="modal-field-value">'+cod+'</div></div>';
+  if(contacto_h) body+='<div class="modal-section"><div class="modal-sec-title">👤 Contacto</div><div class="modal-grid">'+contacto_h+'</div></div>';
+
+  // OBSERVACIONES
+  const obs=get(p,'observaciones','observacion');
+  if(obs&&obs.length>3){
+    body+='<div class="modal-section"><div class="modal-sec-title">📝 Observaciones</div><div class="modal-obs">'+obs+'</div></div>';
+  }
+
+  // OTROS CAMPOS (los que no se mostraron y no son ocultos)
+  const yaUsados=['tipo de inmueble','tipo','ubicaci','ciudad','direccion','dirección','habitaciones','baños','banos','area','estrato','antigüedad','antiguedad','piso','parqueadero','conjunto','barrio','negociaci','asesor','telefono','celular','email','correo','mail','codigo','metrocuadrado','precio','arriendo','canon','administraci','observaci','estado'];
+  let otros_h='';
+  Object.keys(p).forEach(h=>{
+    if(esCOlOculta(h)) return; // sin dirección
+    if(yaUsados.some(k=>h.includes(k))) return;
+    const v=(p[h]||'').trim();
+    if(!v||JUNK.some(j=>v.toLowerCase().startsWith(j))) return;
+    const label=h.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+    otros_h+='<div class="modal-field"><div class="modal-field-label">'+label+'</div><div class="modal-field-value">'+v+'</div></div>';
+  });
+  if(otros_h) body+='<div class="modal-section"><div class="modal-sec-title">📋 Información Adicional</div><div class="modal-grid">'+otros_h+'</div></div>';
+
+  document.getElementById('modal-body').innerHTML = body || '<p style="color:var(--g400);font-size:13px">No hay información adicional disponible.</p>';
+  document.getElementById('modal-overlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal(){
+  document.getElementById('modal-overlay').style.display='none';
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')cerrarModal(); });
+
+// ─── RENDER ───────────────────────────────────
+function getEmoji(t){
+  t=(t||'').toLowerCase();
+  if(t.includes('penthouse'))return'👑';if(t.includes('campestre'))return'🌿';
+  if(t.includes('finca'))return'🌾';if(t.includes('estudio'))return'🏠';
+  if(t.includes('apto')||t.includes('apartamento'))return'🏢';if(t.includes('casa'))return'🏡';
+  if(t.includes('local'))return'🏪';if(t.includes('oficina'))return'💼';
+  if(t.includes('lote')||t.includes('terreno'))return'🌳';if(t.includes('bodega'))return'🏭';
+  return'🏠';
+}
+function fmt(n){
+  if(!n||n<=0)return null;
+  if(n>=1000000000)return'$'+(n/1000000000).toFixed(1).replace(/\.0$/,'')+'B';
+  if(n>=1000000)return'$'+Math.round(n/1000000).toLocaleString('es-CO')+'M';
+  return'$'+Math.round(n).toLocaleString('es-CO');
+}
+// Precio arriendo: numero exacto con separadores de miles
+function fmtA(n){
+  if(!n||n<=0)return null;
+  return'$'+Math.round(n).toLocaleString('es-CO');
+
+}
+
+function render(lista,qv,hayPrecio,esArr){
+  const res=document.getElementById('res');
+  if(!lista.length){
+    res.innerHTML='<div class="empty"><span class="empty-ico">🔍</span><h3>Sin resultados</h3><p>No hay propiedades disponibles con esos criterios. Prueba con otros filtros.</p></div>';
+    return;
+  }
+  let h='<div class="rhead"><div class="rcount">🎯 <b>'+lista.length+'</b> '+(lista.length===1?'propiedad disponible':'propiedades disponibles')+'</div>'+(hayPrecio?'<div class="rsort">📊 Mayor → menor precio</div>':'')+'</div><div class="pgrid">';
+
+  lista.slice(0,80).forEach((p,i)=>{
+    const idx = D.indexOf(p);
+    const tip=get(p,'tipo de inmueble','tipo')||'Inmueble';
+    const ciu=get(p,'ubicaci','ciudad')||'Sin ciudad';
+    const cod=get(p,'codigo','metrocuadrado')||'';
+    const dir=get(p,'direccion','dirección')||'';
+    const asesor=get(p,'asesor responsable','asesor')||'';
+    const pv=pVenta(p),pa=pArriendo(p);
+    const admon=num(get(p,'administraci','admon'));
+    const area=get(p,'area construida','área construida','área','area')||'';
+    const hab=get(p,'habitaciones')||'';
+    const ban=get(p,'baños','banos')||'';
+    const est=get(p,'estrato')||'';
+    const ambas=eA2(p),soloV=eV(p)&&!ambas,soloA=eA(p)&&!ambas;
+    const headCls=ambas?'tb':soloV?'tv':'ta';
+    let mods='';
+    if(soloV||ambas)mods+='<span class="mbadge mbv">💰 Venta</span>';
+    if(soloA||ambas)mods+='<span class="mbadge mba">🔑 Arriendo</span>';
+    mods+='<span class="mbadge mbok">✅ Disponible</span>';
+    let pH='<div class="pblock">';
+    if(pv>0){pH+='<div class="pventa">'+fmt(pv)+' <small>venta</small></div>';if(esArr&&pa>0)pH+='<div class="cross-tag cross-a">🔑 Arriendo: '+fmtA(pa)+'/mes</div>';}
+    if(pa>0){pH+='<div class="parriendo">'+fmtA(pa)+' <small>/mes</small></div>';if(!esArr&&pv>0&&!soloA)pH+='<div class="cross-tag cross-v">💰 Venta: '+fmt(pv)+'</div>';}
+    if(!pv&&!pa)pH+='<div style="font-size:12.5px;color:var(--g400)">Precio a consultar</div>';
+    if(admon>0)pH+='<div class="admon">🏢 Admon: '+fmt(admon)+'/mes</div>';
+    pH+='</div>';
+    const dualH=ambas?'<div class="dalert">⚠️ <strong>Doble modalidad</strong> · Venta: '+(pv>0?fmt(pv):'consultar')+' · Arriendo: '+(pa>0?fmtA(pa)+'/mes':'consultar')+'</div>':'';
+    const specs=[
+      hab&&hab!='0'?'<span class="spec">🛏️ '+hab+'</span>':'',
+      ban&&ban!='0'?'<span class="spec">🚿 '+ban+'</span>':'',
+      area?'<span class="spec">📐 '+area+' m²</span>':'',
+      est&&est!='SIN INFORMACION'?'<span class="spec">Est.'+est+'</span>':'',
+    ].filter(Boolean).join('');
+    const asesorH=asesor?'<div class="asesor">👤 <strong>'+asesor+'</strong></div>':'';
+
+    h+='<div class="pc" style="animation-delay:'+Math.min(i*0.04,1.2)+'s">'
+      +'<div class="pctop '+headCls+'">'+(cod?'<span class="pc-cod">'+cod+'</span>':'')
+      +'<div class="pc-emoji">'+getEmoji(tip)+'</div>'
+      +'<div class="pctop-type">'+tip+'</div>'
+      +'<div class="pc-city-main">'+ciu+'</div>'+(dir?'<div class="pc-city-sub">'+dir+'</div>':'')
+      +'</div>'
+      +'<div class="pcbody">'
+      +'<div class="mods">'+mods+'</div>'
+      +pH
+      +(specs?'<div class="specs">'+specs+'</div>':'')
+      +dualH
+      +asesorH
+      +'<button class="ver-mas-btn" onclick="abrirModal('+idx+')">Ver información completa →</button>'
+      +'</div></div>';
+  });
+
+  h+='</div>';
+  if(lista.length>80) h+='<p style="text-align:center;color:var(--g400);margin-top:14px;font-size:12.5px">Mostrando 80 de '+lista.length+'. Ajusta los filtros para ver más.</p>';
+  res.innerHTML=h;
+  setTimeout(()=>res.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+// ─── ARRANQUE ─────────────────────────────────
+window.addEventListener('DOMContentLoaded', iniciarCarga);
+</script>
+</body>
+</html>

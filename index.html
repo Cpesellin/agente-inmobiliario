@@ -9,7 +9,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g300:#cbd5e1;--g400:#94a3b8;--g500:#64748b;--g600:#475569;--g700:#334155;--g800:#1e293b;--g900:#0f172a;--b50:#eff6ff;--b100:#dbeafe;--b200:#bfdbfe;--b300:#93c5fd;--b400:#60a5fa;--b500:#3b82f6;--b600:#2563eb;--b700:#1d4ed8;--b800:#1e40af;--b900:#1e3a8a;--green:#10b981;--greenbg:#ecfdf5;--gb:rgba(16,185,129,.2);--red:#ef4444;--redbg:#fef2f2;--rb:rgba(239,68,68,.2);--gold:#f59e0b;--goldbg:#fffbeb;--yb:rgba(245,158,11,.2);--purple:#8b5cf6;--r:12px;--bg:#f8fafc;--cd:#fff;--cd2:#f1f5f9;--brd:var(--g200);--tx:var(--g800);--sub:var(--g500);--hdr:rgba(255,255,255,.97);--inp:var(--g50)}
-body.dark{--g50:#1e293b;--g100:#1a2332;--g200:#2d3f55;--g300:#3d5270;--g400:#64748b;--g500:#94a3b8;--g600:#cbd5e1;--g700:#e2e8f0;--g800:#f1f5f9;--g900:#f8fafc;--b50:#0f1f3d;--b100:#162544;--b200:#1e3a6e;--greenbg:#052e16;--gb:rgba(16,185,129,.3);--redbg:#2d0a0a;--rb:rgba(239,68,68,.3);--goldbg:#2d1f00;--yb:rgba(245,158,11,.3);--bg:#0f172a;--cd:#1e293b;--cd2:#162032;--brd:#2d3f55;--tx:#f1f5f9;--sub:#94a3b8;--hdr:rgba(15,23,42,.97);--inp:#162032}
+body.dark{--g50:#1e293b;--g100:#1e2a3a;--g200:#334155;--g300:#475569;--g400:#64748b;--g500:#94a3b8;--g600:#cbd5e1;--g700:#e2e8f0;--g800:#f1f5f9;--g900:#f8fafc;--b50:#172554;--b100:#1e3a5f;--b200:#1e40af;--greenbg:#064e3b;--gb:rgba(16,185,129,.35);--redbg:#450a0a;--rb:rgba(239,68,68,.35);--goldbg:#451a03;--yb:rgba(245,158,11,.35);--bg:#0f172a;--cd:#1e293b;--cd2:#1a2332;--brd:#334155;--tx:#f1f5f9;--sub:#94a3b8;--hdr:rgba(15,23,42,.97);--inp:#1a2332}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}button{font-family:inherit;cursor:pointer}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--b300);border-radius:3px}
 header{position:sticky;top:0;z-index:100;background:var(--hdr);backdrop-filter:blur(16px);border-bottom:1px solid var(--brd)}.nav{max-width:1300px;margin:0 auto;padding:0 14px;height:54px;display:flex;align-items:center;justify-content:space-between;gap:8px}.lw{display:flex;align-items:center;gap:7px;text-decoration:none;cursor:pointer}.ls{width:32px;height:32px}.lm{font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--g900)}.nr{display:flex;align-items:center;gap:6px}
 .ib{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--brd);background:var(--cd2);font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--tx);position:relative}.ib:hover{border-color:var(--b400)}.ib .bdg{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:8px;font-weight:800;min-width:15px;height:15px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px}
@@ -24,22 +24,23 @@ header{position:sticky;top:0;z-index:100;background:var(--hdr);backdrop-filter:b
 .sbsp{display:inline-block;animation:sp 1s linear infinite;font-style:normal}@keyframes sp{to{transform:rotate(360deg)}}.rlb{margin-left:auto;display:none;align-items:center;gap:4px;background:var(--b600);color:#fff;border:none;padding:3px 9px;border-radius:14px;font-size:10px;font-weight:700}
 /* PIPELINE */
 .pw{overflow-x:auto;padding:12px 0;-webkit-overflow-scrolling:touch}.pipe{display:flex;gap:10px;min-width:max-content;padding-bottom:8px}
-.pcol{width:230px;min-width:230px;background:var(--cd2);border:1px solid var(--brd);border-radius:var(--r);flex-shrink:0;max-height:calc(100vh - 200px);display:flex;flex-direction:column;transition:box-shadow .2s}
+.pcol{width:260px;min-width:260px;background:var(--cd2);border:1px solid var(--brd);border-radius:var(--r);flex-shrink:0;max-height:calc(100vh - 200px);display:flex;flex-direction:column;transition:box-shadow .2s}
 .pcol.drag-over{box-shadow:0 0 0 3px var(--b400);background:var(--b50)}
-.pch{padding:10px 12px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}.pct{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px}.pcc{font-size:10px;font-weight:800;background:var(--cd);padding:2px 7px;border-radius:10px;color:var(--sub)}
-.pcb{padding:6px;overflow-y:auto;flex:1;min-height:60px}
-.pkc{background:var(--cd);border:1px solid var(--brd);border-radius:8px;padding:9px;margin-bottom:6px;transition:all .2s}
-.pkc:hover{border-color:var(--b300)}
-.pkc[draggable="true"]{cursor:grab}.pkc[draggable="true"]:active{cursor:grabbing;opacity:.7}
+.pch{padding:12px 14px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}.pct{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px}.pcc{font-size:11px;font-weight:800;background:var(--cd);padding:3px 9px;border-radius:10px;color:var(--sub)}
+.pcb{padding:8px;overflow-y:auto;flex:1;min-height:60px}
+.pkc{background:var(--cd);border:1.5px solid var(--brd);border-radius:10px;padding:14px;margin-bottom:8px;transition:all .15s;position:relative}
+.pkc:hover{border-color:var(--b300);box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.pkc[draggable="true"]{cursor:grab}.pkc[draggable="true"]:active{cursor:grabbing;opacity:.6;transform:scale(.97)}
+.pkc.dragging{opacity:.3;transform:scale(.95)}.pkc.ghost-target{border:2px dashed var(--b400);background:var(--b50);min-height:60px}
 .pk-move select{cursor:pointer}
-.pktp{font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px}.pkci{font-size:9px;color:var(--sub);margin-top:1px}
-.pkpr{font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--b700);margin-top:3px}
-.pksp{display:flex;gap:2px;margin-top:4px;flex-wrap:wrap}.pksp span{font-size:8px;background:var(--cd2);padding:1px 4px;border-radius:3px;border:1px solid var(--brd)}
-.pkbt{display:flex;align-items:center;justify-content:space-between;margin-top:5px;padding-top:5px;border-top:1px solid var(--g100)}.pkas{font-size:8px;color:var(--sub)}.pkpt{display:flex;gap:2px}
-.pp{font-size:7px;font-weight:800;padding:1px 4px;border-radius:3px}.ppok{background:var(--greenbg);color:#065f46;border:1px solid var(--gb)}.ppno{background:var(--redbg);color:var(--red);border:1px solid var(--rb)}
-.pk-timer{font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px;margin-top:4px;display:inline-flex;align-items:center;gap:3px}
+.pktp{font-size:14px;font-weight:800;display:flex;align-items:center;gap:5px}.pkci{font-size:12px;color:var(--sub);margin-top:2px}
+.pkpr{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--b700);margin-top:5px}
+.pksp{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}.pksp span{font-size:10px;background:var(--cd2);padding:2px 6px;border-radius:4px;border:1px solid var(--brd);font-weight:600}
+.pkbt{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)}.pkas{font-size:10px;color:var(--sub);font-weight:600}.pkpt{display:flex;gap:3px}
+.pp{font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px}.ppok{background:var(--greenbg);color:#065f46;border:1px solid var(--gb)}.ppno{background:var(--redbg);color:var(--red);border:1px solid var(--rb)}
+.pk-timer{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;margin-top:6px;display:inline-flex;align-items:center;gap:4px}
 .pk-timer.ok{background:var(--greenbg);color:#065f46}.pk-timer.warn{background:var(--goldbg);color:#92400e}.pk-timer.danger{background:var(--redbg);color:var(--red)}
-.pk-reval{margin-top:4px;width:100%;padding:5px 8px;background:var(--gold);color:#fff;border:none;border-radius:5px;font-size:9px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:3px}
+.pk-reval{margin-top:6px;width:100%;padding:8px 10px;background:var(--gold);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:4px}
 .pcol.c-d .pch{background:rgba(16,185,129,.06)}.pcol.c-d .pct{color:var(--green)}
 .pcol.c-vd .pch{background:rgba(245,158,11,.08)}.pcol.c-vd .pct{color:var(--gold)}
 .pcol.c-ad .pch{background:rgba(59,130,246,.06)}.pcol.c-ad .pct{color:var(--b600)}
@@ -143,12 +144,17 @@ header{position:sticky;top:0;z-index:100;background:var(--hdr);backdrop-filter:b
 .ptl-link .ptl-btn{padding:4px 10px;border-radius:5px;font-size:9px;font-weight:700;border:none;font-family:inherit}
 .ptl-link .ptl-add{background:var(--gold);color:#fff}.ptl-link .ptl-edit{background:var(--b600);color:#fff}.ptl-link .ptl-view{background:var(--greenbg);color:#065f46;border:1px solid var(--gb)}
 
-/* PIPE NAV BADGES */
-.pnav-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:16px;font-size:9px;font-weight:700;border:1.5px solid var(--brd);background:var(--cd);color:var(--sub);cursor:pointer;white-space:nowrap;transition:all .15s}
-.pnav-btn:hover{border-color:var(--b400);color:var(--b700)}
-.pnav-btn .pnav-n{background:var(--b600);color:#fff;font-size:8px;padding:1px 5px;border-radius:8px;font-weight:800}
-.pnav-btn.c-d .pnav-n{background:var(--green)}.pnav-btn.c-vd .pnav-n{background:var(--gold)}.pnav-btn.c-ad .pnav-n{background:var(--b600)}
-.pnav-btn.c-ar .pnav-n{background:#065f46}.pnav-btn.c-ve .pnav-n{background:var(--b800)}.pnav-btn.c-re .pnav-n{background:var(--red)}
+/* PIPE NAV BADGES - GRID */
+.pnav-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.pnav-btn{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:10px;font-size:11px;font-weight:700;border:1.5px solid var(--brd);background:var(--cd);color:var(--tx);cursor:pointer;transition:all .15s}
+.pnav-btn:hover{border-color:var(--b400);background:var(--b50)}
+.pnav-btn .pnav-n{background:var(--b600);color:#fff;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:800;margin-left:auto}
+.pnav-btn.c-d{border-color:rgba(16,185,129,.3)}.pnav-btn.c-d .pnav-n{background:var(--green)}
+.pnav-btn.c-vd{border-color:rgba(245,158,11,.3)}.pnav-btn.c-vd .pnav-n{background:var(--gold)}
+.pnav-btn.c-ad{border-color:rgba(59,130,246,.3)}.pnav-btn.c-ad .pnav-n{background:var(--b600)}
+.pnav-btn.c-ar{border-color:rgba(16,185,129,.4)}.pnav-btn.c-ar .pnav-n{background:#065f46}
+.pnav-btn.c-ve{border-color:rgba(30,64,175,.3)}.pnav-btn.c-ve .pnav-n{background:var(--b800)}
+.pnav-btn.c-re{border-color:rgba(239,68,68,.3)}.pnav-btn.c-re .pnav-n{background:var(--red)}
 
 /* TOAST */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:999;padding:10px 20px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 8px 30px rgba(0,0,0,.25);animation:tIn .3s,tOut .3s 2.7s forwards;pointer-events:none;white-space:nowrap}
@@ -156,24 +162,24 @@ header{position:sticky;top:0;z-index:100;background:var(--hdr);backdrop-filter:b
 @keyframes tIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @keyframes tOut{to{opacity:0;transform:translateX(-50%) translateY(-10px)}}
 /* WELCOME BANNER */
-.wban{background:linear-gradient(135deg,var(--b50),var(--cd));border:1.5px solid var(--b200);border-radius:10px;padding:12px 14px;margin-bottom:10px}
-.wban-hi{font-size:14px;font-weight:800;color:var(--tx)}.wban-sub{font-size:10px;color:var(--sub);margin-top:2px}
+.wban{background:linear-gradient(135deg,var(--b50),var(--cd));border:1.5px solid var(--b200);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.wban-hi{font-size:16px;font-weight:800;color:var(--tx)}.wban-sub{font-size:12px;color:var(--sub);margin-top:3px}
 .wban-tasks{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.wban-t{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:8px;font-size:9px;font-weight:700;border:1.5px solid;cursor:pointer}
+.wban-t{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer}
 .wban-t.urg{background:var(--redbg);border-color:var(--rb);color:var(--red)}.wban-t.wrn{background:var(--goldbg);border-color:var(--yb);color:#92400e}.wban-t.ok{background:var(--greenbg);border-color:var(--gb);color:#065f46}
 /* NEW BADGE */
-.pk-new{position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;font-size:6px;font-weight:800;padding:1px 4px;border-radius:4px;animation:pulse 1.5s infinite}
+.pk-new{position:absolute;top:-3px;right:-3px;background:var(--red);color:#fff;font-size:8px;font-weight:800;padding:2px 6px;border-radius:4px;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 /* RECENT SEARCHES */
 .rsrch{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap}
-.rsrch-ch{padding:3px 8px;border-radius:10px;font-size:9px;font-weight:600;background:var(--cd2);border:1px solid var(--brd);color:var(--sub);cursor:pointer}.rsrch-ch:hover{border-color:var(--b400);color:var(--b700)}
+.rsrch-ch{padding:4px 10px;border-radius:10px;font-size:10px;font-weight:600;background:var(--cd2);border:1px solid var(--brd);color:var(--sub);cursor:pointer}.rsrch-ch:hover{border-color:var(--b400);color:var(--b700)}
 /* CONFIRM DIALOG */
 .cfdlg{position:fixed;inset:0;z-index:400;background:rgba(15,23,42,.7);display:flex;align-items:center;justify-content:center;padding:16px;animation:fi .15s}
-.cfbox{background:var(--cd);border-radius:12px;padding:20px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.cfbox .cfi{font-size:36px;margin-bottom:8px}.cfbox .cft{font-size:14px;font-weight:800;margin-bottom:4px}.cfbox .cfm{font-size:11px;color:var(--sub);margin-bottom:14px}
-.cfbox .cfbtns{display:flex;gap:6px}.cfbox .cfbtns button{flex:1;padding:8px;border-radius:6px;font-size:12px;font-weight:700;border:none;font-family:inherit}
+.cfbox{background:var(--cd);border-radius:12px;padding:24px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.cfbox .cfi{font-size:40px;margin-bottom:10px}.cfbox .cft{font-size:16px;font-weight:800;margin-bottom:4px}.cfbox .cfm{font-size:12px;color:var(--sub);margin-bottom:16px}
+.cfbox .cfbtns{display:flex;gap:8px}.cfbox .cfbtns button{flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:700;border:none;font-family:inherit}
 
-@media(max-width:640px){.fg{grid-template-columns:1fr}.pgr{grid-template-columns:1fr}.mgr{grid-template-columns:1fr}.ffg{grid-template-columns:1fr}.ftg{grid-template-columns:repeat(2,1fr)}.amg{grid-template-columns:repeat(3,1fr)}.hin{flex-direction:column;text-align:center}.sr{width:100%}.pcol{width:210px;min-width:210px}}
+@media(max-width:640px){.fg{grid-template-columns:1fr}.pgr{grid-template-columns:1fr}.mgr{grid-template-columns:1fr}.ffg{grid-template-columns:1fr}.ftg{grid-template-columns:repeat(2,1fr)}.amg{grid-template-columns:repeat(3,1fr)}.hin{flex-direction:column;text-align:center}.sr{width:100%}.pcol{width:240px;min-width:240px}.pnav-wrap{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -204,7 +210,7 @@ header{position:sticky;top:0;z-index:100;background:var(--hdr);backdrop-filter:b
 <div class="br"><button class="bt bp" onclick="doSearch()">🔍 Buscar</button><button class="bt bs2" onclick="mostrarTodo()">Todos</button><button class="bt bd" onclick="limpiar()">✕</button></div></div></div>
 <div id="res"></div></div></div>
 <!-- MIS INMUEBLES = EMBUDO PERSONAL -->
-<div class="sec" id="sec-mis"><div style="max-width:1300px;margin:0 auto;padding:10px 14px 80px"><div id="mis-nav" style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap;overflow-x:auto"></div><div class="pw"><div class="pipe" id="pipeline"></div></div></div></div>
+<div class="sec" id="sec-mis"><div style="max-width:1300px;margin:0 auto;padding:10px 14px 80px"><div class="pnav-wrap" id="mis-nav"></div><div class="pw"><div class="pipe" id="pipeline"></div></div></div></div>
 <div class="sec" id="sec-reg"><div class="fsec"><div class="card"><div class="cdh"><div class="chl"><div class="chi">➕</div><div><div class="cht">Registrar</div><div class="chsb" id="fsl">Paso 1/5</div></div></div></div><div class="cdb"><div class="pds" id="fdt"></div><div id="fc"></div><div class="fsn"><button class="bt bs2" id="fp" onclick="fPr()" style="display:none">←</button><button class="bt bp" id="fn" onclick="fNx()">Continuar →</button></div></div></div></div></div>
 <div class="sec" id="sec-alertas"><div class="card"><div class="cdh"><div class="chl"><div class="chi">🔔</div><div><div class="cht">Alertas</div></div></div></div><div class="cdb" id="all"></div></div></div>
 <div class="sec" id="sec-portales"><div class="card"><div class="cdh"><div class="chl"><div class="chi">🌐</div><div><div class="cht">Portales</div></div></div></div><div class="cdb" id="ptl"></div></div></div>
@@ -300,10 +306,9 @@ function rPipe(){const el=document.getElementById('pipeline');const nav=document
 const myItems=MIS.length?MIS:D.filter(p=>{const cap=(p.email_captador||'').toString().toLowerCase();return U&&cap===U.email.toLowerCase();});
 const colCounts={};PCOLS.forEach(col=>{colCounts[col.id]=myItems.filter(p=>{const est=(g(p,'estado actual')||'Disponible').trim();return est===col.id||(col.id==='Disponible'&&(!est||est==='Disponible'));}).length;});
 const total=myItems.length;
-nav.innerHTML=`<span style="font-size:11px;font-weight:800;color:var(--tx)">🔀 Mi Embudo</span><span style="font-size:9px;color:var(--sub)">(${total})</span>`+
-PCOLS.map((col,i)=>`<button class="pnav-btn ${col.c}" onclick="scrollToCol(${i})">${col.e} ${col.l} <span class="pnav-n">${colCounts[col.id]}</span></button>`).join('');
+/* GRID NAV */
+nav.innerHTML=PCOLS.map((col,i)=>`<button class="pnav-btn ${col.c}" onclick="scrollToCol(${i})">${col.e} ${col.l} <span class="pnav-n">${colCounts[col.id]}</span></button>`).join('');
 let h='';PCOLS.forEach(col=>{const items=myItems.filter(p=>{const est=(g(p,'estado actual')||'Disponible').trim();return est===col.id||(col.id==='Disponible'&&(!est||est==='Disponible'));});
-/* Sort by urgency: most days first */
 items.sort((a,b)=>(b._diasEnEstado||0)-(a._diasEnEstado||0));
 h+=`<div class="pcol ${col.c}" data-estado="${col.id}"><div class="pch"><span class="pct">${col.e} ${col.l}</span><span class="pcc">${items.length}</span></div><div class="pcb">`;
 items.forEach(p=>{const idx=D.findIndex(d=>(d.id_inmueble||'').toString()===(p.id_inmueble||'').toString()||(d._fila||'').toString()===(p._fila||'').toString());
@@ -312,43 +317,104 @@ const m2=(p.url_metrocuadrado||(p._tieneM2?'yes':'')).toString().trim().length>3
 const dias=p._diasEnEstado||0,umb=UMBRAL[col.id]||15;
 const isNew=col.id==='Verificar Disponibilidad'&&dias<=1;
 const hab=g(p,'habitaciones')||'',ban=g(p,'baños','banos')||'',area=g(p,'area construida','área construida')||'';
-const sps=[hab&&hab!='0'?'🛏️'+hab:'',ban&&ban!='0'?'🚿'+ban:'',area?'📐'+area+'m²':''].filter(Boolean);
+const sps=[hab&&hab!='0'?'🛏️ '+hab:'',ban&&ban!='0'?'🚿 '+ban:'',area?'📐 '+area+'m²':''].filter(Boolean);
 const ownerESTS=PCOLS.filter(c2=>c2.id!==col.id&&c2.id!=='Verificar Disponibilidad');
-h+=`<div class="pkc" style="position:relative${isNew?';border-color:var(--red);border-width:2px':''}" draggable="true" ondragstart="dStart(event,'${p.id_inmueble||p._fila}')" onclick="oM(${idx>=0?idx:0})">`;
+const pid=p.id_inmueble||p._fila;
+h+=`<div class="pkc" id="pkc-${pid}" style="${isNew?'border-color:var(--red);border-width:2px':''}" draggable="true" ondragstart="dStart(event,'${pid}')" onclick="oM(${idx>=0?idx:0})">`;
 if(isNew)h+=`<span class="pk-new">NUEVO</span>`;
 h+=`<div class="pktp">${emo(tip)} ${tip}</div><div class="pkci">📍 ${ciu}</div>`;
 if(pv>0||pa>0)h+=`<div class="pkpr">${pv>0?fm(pv):''}${pv>0&&pa>0?' · ':''}${pa>0?fm(pa)+'/mes':''}</div>`;
 if(sps.length)h+=`<div class="pksp">${sps.map(s=>'<span>'+s+'</span>').join('')}</div>`;
 h+=timerBadge(dias,umb);
-if(col.id==='Aún Disponible')h+=`<button class="pk-reval" onclick="event.stopPropagation();reVal('${p.id_inmueble||p._fila}')">🔄 Volver a validar</button>`;
+if(col.id==='Aún Disponible')h+=`<button class="pk-reval" onclick="event.stopPropagation();reVal('${pid}')">🔄 Volver a validar</button>`;
 h+=`<div class="pkbt"><span class="pkas">👤 ${ase}</span><div class="pkpt">${m2?'<span class="pp ppok">M²</span>':'<span class="pp ppno">M²</span>'}${fr?'<span class="pp ppok">FR</span>':'<span class="pp ppno">FR</span>'}</div></div>`;
-h+=`<div class="pk-move" onclick="event.stopPropagation()"><select class="esel" style="width:100%;font-size:8px;margin-top:4px" onchange="if(this.value)quickMove('${p.id_inmueble||p._fila}',this.value)"><option value="">⇄ Mover a...</option>${ownerESTS.map(c2=>`<option value="${c2.id}">${c2.e} ${c2.l}</option>`).join('')}</select></div>`;
+h+=`<div class="pk-move" onclick="event.stopPropagation()"><select class="esel" style="width:100%;font-size:10px;margin-top:6px;padding:6px" onchange="if(this.value)quickMove('${pid}',this.value)"><option value="">⇄ Mover a...</option>${ownerESTS.map(c2=>`<option value="${c2.id}">${c2.e} ${c2.l}</option>`).join('')}</select></div>`;
 h+=`</div>`;});h+='</div></div>';});el.innerHTML=h;
+/* Drag targets */
 document.querySelectorAll('.pcol').forEach(c=>{c.addEventListener('dragover',e=>{e.preventDefault();c.classList.add('drag-over');});c.addEventListener('dragleave',()=>c.classList.remove('drag-over'));c.addEventListener('drop',e=>{e.preventDefault();c.classList.remove('drag-over');const id=e.dataTransfer.getData('text/plain');if(id)quickMove(id,c.dataset.estado);});});}
 function scrollToCol(i){const cols=document.querySelectorAll('.pcol');if(cols[i])cols[i].scrollIntoView({behavior:'smooth',block:'nearest',inline:'start'});}
-function dStart(e,id){e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move';}
-async function quickMove(id,estado){if(!id||!estado)return;if(FINAL_STATES.includes(estado)){const ok=await cfShow(estado==='Arrendado'?'🔑':estado==='Vendido'?'💰':'⛔','¿Mover a '+estado+'?','Esta acción genera alertas a todo el equipo. ¿Confirmas?');if(!ok)return;}const r=await aP({action:'actualizarEstado',id_inmueble:id,nuevo_estado:estado});if(r&&r.success){toast('✅ Movido a '+estado);load();}else toast(r?r.message:'Error','terr');}
+function dStart(e,id){e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move';const card=document.getElementById('pkc-'+id);if(card)card.classList.add('dragging');}
+/* OPTIMISTIC MOVE — instant visual + background save */
+async function quickMove(id,estado){if(!id||!estado)return;
+if(FINAL_STATES.includes(estado)){const ok=await cfShow(estado==='Arrendado'?'🔑':estado==='Vendido'?'💰':'⛔','¿Mover a '+estado+'?','Genera alertas a todo el equipo');if(!ok)return;}
+/* Optimistic: move card visually NOW */
+const card=document.getElementById('pkc-'+id);
+const targetCol=document.querySelector(`.pcol[data-estado="${estado}"] .pcb`);
+if(card&&targetCol){card.classList.remove('dragging');targetCol.prepend(card);
+/* Update counts visually */
+document.querySelectorAll('.pcol').forEach(c=>{const n=c.querySelector('.pcb').children.length;const cc=c.querySelector('.pcc');if(cc)cc.textContent=n;});
+toast('✅ Movido a '+estado);}
+/* Background save */
+const r=await aP({action:'actualizarEstado',id_inmueble:id,nuevo_estado:estado});
+if(r&&r.success){load();}else{toast('❌ Error — revirtiendo','terr');load();}}
 async function reVal(id){const r=await aP({action:'volverAValidar',id_inmueble:id});if(r&&r.success){toast('✅ Timer reiniciado');load();}else toast(r?r.message:'Error','terr');}
 async function verificarInm(id){const r=await aP({action:'actualizarEstado',id_inmueble:id,nuevo_estado:'Verificar Disponibilidad'});if(r&&r.success){toast('🔍 Verificación solicitada');load();}else toast(r?r.message:'Error','terr');}
 /* MODAL - with price editing for owner */
-function oM(idx){const p=D[idx];if(!p)return;const tip=g(p,'tipo de inmueble','tipo')||'Inmueble',ciu=g(p,'ubicaci','ciudad')||'',dir=g(p,'direccion','dirección')||'';document.getElementById('mtt').textContent=tip;document.getElementById('msb3').textContent=(ciu?'📍 '+ciu:'')+(dir?' · '+dir:'');const pv=pV(p),pa=pA(p),idInm=p.id_inmueble||p._fila;let b='';
-const est=g(p,'estado actual')||'Disponible',cap=(p.email_captador||'').toString().toLowerCase(),esMio=U&&cap===U.email.toLowerCase(),esP=U&&(U.rol==='admin'||U.rol==='oficina');
-/* PRICES - editable for owner */
-if(esMio||esP){b+=`<div class="msc"><div class="msct">💰 Precios <span style="font-size:7px;color:var(--gold)">(editable)</span></div><div class="mgr">`;b+=`<div class="mf hlb"><div class="mfl">Venta</div><div style="display:flex;gap:4px;align-items:center"><input type="number" id="mpv" value="${pv||''}" style="flex:1;padding:4px;border:1.5px solid var(--brd);border-radius:4px;font-size:12px;font-weight:700;font-family:Fraunces,serif;color:var(--b700);background:var(--cd)" placeholder="0"></div></div>`;b+=`<div class="mf hlg"><div class="mfl">Arriendo/mes</div><div style="display:flex;gap:4px;align-items:center"><input type="number" id="mpa" value="${pa||''}" style="flex:1;padding:4px;border:1.5px solid var(--brd);border-radius:4px;font-size:12px;font-weight:700;color:#065f46;background:var(--cd)" placeholder="0"></div></div>`;b+=`<button class="bt bsm bp" style="grid-column:1/-1" onclick="savePrice('${idInm}',${pv},${pa})">💾 Guardar precio</button></div></div>`;}else{if(pv>0||pa>0){b+='<div class="msc"><div class="msct">💰 Precios</div><div class="mgr">';if(pv>0)b+=`<div class="mf hlb"><div class="mfl">Venta</div><div class="mfv">${fm(pv)}</div></div>`;if(pa>0)b+=`<div class="mf hlg"><div class="mfl">Arriendo</div><div class="mfv">${fm(pa)}/mes</div></div>`;b+='</div></div>';}}
-const flds=[['tipo de inmueble','Tipo'],['ubicaci','Ciudad'],['habitaciones','Hab.'],['baños','Baños'],['area construida','Área m²'],['estrato','Estrato']];let fH='';flds.forEach(([k,l])=>{const v=g(p,k);if(v)fH+=`<div class="mf"><div class="mfl">${l}</div><div class="mfv">${v}</div></div>`;});if(fH)b+=`<div class="msc"><div class="msct">🏠 Características</div><div class="mgr">${fH}</div></div>`;
-const ase=g(p,'asesor responsable','asesor'),tel=g(p,'teléfono','telefono'),email=g(p,'email','correo');let cH='';
-if(ase)cH+=`<div class="mf ful"><div class="mfl">Asesor captador</div><div class="mfv">👤 ${ase}</div></div>`;
-if(tel&&tel!=='🔒 Protegido')cH+=`<div class="mf"><div class="mfl">Tel. propietario</div><div class="mfv">📞 ${tel}</div></div>`;
-if(email&&email!=='🔒 Protegido')cH+=`<div class="mf"><div class="mfl">Email propietario</div><div class="mfv">✉️ ${email}</div></div>`;
-if(cH){b+='<div class="msc"><div class="msct">👤 Contacto</div>';if(esMio)b+='<div style="background:var(--greenbg);border:1px solid var(--gb);border-radius:6px;padding:6px 10px;margin-bottom:6px;font-size:9px;color:#065f46;font-weight:700">🔒 Datos protegidos — Solo tú y admin</div>';b+=`<div class="mgr">${cH}</div></div>`;}
+function oM(idx){const p=D[idx];if(!p)return;const idInm=p.id_inmueble||p._fila;
+const cap=(p.email_captador||'').toString().toLowerCase(),esMio=U&&cap===U.email.toLowerCase(),esP=U&&(U.rol==='admin'||U.rol==='oficina'),canEdit=esMio||esP;
+const tip=g(p,'tipo de inmueble','tipo')||'',ciu=g(p,'ubicaci','ciudad')||'',dir=g(p,'direccion','dirección')||'',pv=pV(p),pa=pA(p),est=g(p,'estado actual')||'Disponible';
+const hab=g(p,'habitaciones')||'',ban=g(p,'baños','banos')||'',area=g(p,'area construida','área construida')||'',estr=g(p,'estrato')||'';
+const ase=g(p,'asesor responsable','asesor')||'',tel=g(p,'teléfono','telefono')||'',email=g(p,'email','correo')||'',propN=g(p,'contacto','propietario')||'';
+const neg=g(p,'tipo de negociaci','negociaci')||'',obs=g(p,'observaciones','observacion')||'';
+const casillas=g(p,'casillas de verificaci','casillas')||'';
+document.getElementById('mtt').textContent=tip||'Inmueble';
+document.getElementById('msb3').textContent=(ciu?'📍 '+ciu:'')+(dir?' · '+dir:'');
+const inp=(id,val,ph,type)=>`<input id="${id}" type="${type||'text'}" value="${(val||'').toString().replace(/"/g,'&quot;')}" placeholder="${ph||''}" style="width:100%;padding:5px 8px;border:1.5px solid var(--brd);border-radius:5px;font-size:11px;font-family:inherit;color:var(--tx);background:var(--cd)">`;
+const sel=(id,opts,cur)=>`<select id="${id}" class="esel" style="width:100%;font-size:11px">${opts.map(o=>`<option ${o===cur?'selected':''}>${o}</option>`).join('')}</select>`;
+let b='';
+if(canEdit){
+/* EDITABLE MODE */
+b+=`<div class="msc"><div class="msct">🏠 Información del inmueble <span style="font-size:7px;color:var(--gold)">(editable)</span></div><div class="mgr">`;
+b+=`<div class="mf"><div class="mfl">Tipo</div>${sel('me_tipo',['Casa','Apartamento','Finca','Local comercial','Oficina','Lote','Casa campestre','Bodega','Penthouse'],tip)}</div>`;
+b+=`<div class="mf"><div class="mfl">Negociación</div>${sel('me_neg',['Venta','Arriendo','Venta y Arriendo'],neg)}</div>`;
+b+=`<div class="mf ful"><div class="mfl">Dirección</div>${inp('me_dir',dir,'Calle 50 #32-15')}</div>`;
+b+=`<div class="mf"><div class="mfl">Ciudad</div>${inp('me_ciu',ciu,'Pereira')}</div>`;
+b+=`<div class="mf"><div class="mfl">Estrato</div>${sel('me_est',['','1','2','3','4','5','6'],estr)}</div>`;
+b+=`</div></div>`;
+b+=`<div class="msc"><div class="msct">💰 Precios</div><div class="mgr">`;
+b+=`<div class="mf hlb"><div class="mfl">Venta</div>${inp('me_pv',pv||'','450000000','number')}</div>`;
+b+=`<div class="mf hlg"><div class="mfl">Arriendo/mes</div>${inp('me_pa',pa||'','2500000','number')}</div>`;
+b+=`</div></div>`;
+b+=`<div class="msc"><div class="msct">📐 Características</div><div class="mgr">`;
+b+=`<div class="mf"><div class="mfl">Habitaciones</div>${inp('me_hab',hab,'3','number')}</div>`;
+b+=`<div class="mf"><div class="mfl">Baños</div>${inp('me_ban',ban,'2','number')}</div>`;
+b+=`<div class="mf"><div class="mfl">Área m²</div>${inp('me_area',area,'120','number')}</div>`;
+b+=`<div class="mf"><div class="mfl">Parqueos</div>${inp('me_parq',g(p,'parqueo','garaje')||'','1','number')}</div>`;
+b+=`<div class="mf ful"><div class="mfl">Características adicionales</div>${inp('me_carac',casillas,'piscina, gimnasio, ascensor...')}</div>`;
+b+=`</div></div>`;
+/* CONTACTO PROPIETARIO */
+b+=`<div class="msc"><div class="msct">👤 Propietario</div>`;
+b+=`<div style="background:var(--greenbg);border:1px solid var(--gb);border-radius:6px;padding:6px 10px;margin-bottom:6px;font-size:9px;color:#065f46;font-weight:700">🔒 Solo tú y admin ven estos datos</div>`;
+b+=`<div class="mgr">`;
+b+=`<div class="mf ful"><div class="mfl">Nombre propietario</div>${inp('me_prop',propN,'Nombre completo')}</div>`;
+b+=`<div class="mf"><div class="mfl">Teléfono</div>${inp('me_tel',tel,'3001234567','tel')}</div>`;
+b+=`<div class="mf"><div class="mfl">Email</div>${inp('me_email',email,'correo@mail.com','email')}</div>`;
+b+=`</div></div>`;
+b+=`<div class="msc"><div class="msct">📝 Observaciones</div><textarea id="me_obs" style="width:100%;padding:6px 8px;border:1.5px solid var(--brd);border-radius:5px;font-size:11px;font-family:inherit;color:var(--tx);background:var(--cd);min-height:50px;resize:vertical">${obs}</textarea></div>`;
+/* SAVE ALL BUTTON */
+b+=`<button class="bt bp" style="width:100%;margin-bottom:10px" onclick="saveAll('${idInm}')">💾 Guardar todos los cambios</button>`;
+}else{
+/* READ ONLY MODE */
+if(pv>0||pa>0){b+='<div class="msc"><div class="msct">💰 Precios</div><div class="mgr">';if(pv>0)b+=`<div class="mf hlb"><div class="mfl">Venta</div><div class="mfv">${fm(pv)}</div></div>`;if(pa>0)b+=`<div class="mf hlg"><div class="mfl">Arriendo</div><div class="mfv">${fm(pa)}/mes</div></div>`;b+='</div></div>';}
+const flds=[['tipo de inmueble','Tipo'],['ubicaci','Ciudad'],['direccion','Dirección'],['habitaciones','Hab.'],['baños','Baños'],['area construida','Área m²'],['estrato','Estrato']];let fH='';flds.forEach(([k,l])=>{const v=g(p,k);if(v)fH+=`<div class="mf"><div class="mfl">${l}</div><div class="mfv">${v}</div></div>`;});if(fH)b+=`<div class="msc"><div class="msct">🏠 Características</div><div class="mgr">${fH}</div></div>`;
+if(ase)b+=`<div class="msc"><div class="msct">👤 Asesor</div><div class="mgr"><div class="mf ful"><div class="mfl">Captador</div><div class="mfv">👤 ${ase}</div></div></div></div>`;
+}
+/* PORTALES (read for all) */
 const m2=(p.url_metrocuadrado||'').toString().trim(),fr=(p.url_fincaraiz||'').toString().trim();if(m2.length>5||fr.length>5){b+='<div class="msc"><div class="msct">🌐 Portales</div><div class="mgr">';if(m2.length>5)b+=`<div class="mf"><div class="mfl">M²</div><div class="mfv"><a href="${m2}" target="_blank" style="color:var(--b600);font-size:10px">Abrir →</a></div></div>`;if(fr.length>5)b+=`<div class="mf"><div class="mfl">FR</div><div class="mfv"><a href="${fr}" target="_blank" style="color:var(--b600);font-size:10px">Abrir →</a></div></div>`;b+='</div></div>';}
-if(esMio||esP){const useESTS=esMio&&!esP?PCOLS.filter(c=>c.id!=='Verificar Disponibilidad'):PCOLS;b+=`<div class="msc"><div class="msct">⚙️ Gestión</div><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap"><select class="esel" onchange="chgE('${idInm}',this.value)">${useESTS.map(e=>`<option ${e.id===est?'selected':''}>${e.id}</option>`).join('')}</select><button class="bt bsm bgr" onclick="confD('${idInm}')">✓ Confirmar</button></div></div>`;}
-if(!esMio&&U&&U.rol==='asesor'){const curEst=(g(p,'estado actual')||'Disponible').trim();if(curEst!=='Verificar Disponibilidad')b+=`<div style="margin-top:8px"><button class="bt bp" style="width:100%" onclick="verificarInm('${idInm}');cm()">🔍 Verificar disponibilidad</button></div>`;else b+=`<div style="margin-top:8px;padding:8px;background:var(--goldbg);border:1px solid var(--yb);border-radius:6px;font-size:10px;text-align:center;color:#92400e;font-weight:700">⏳ En verificación</div>`;}
-b+=`<div class="abx"><div style="font-size:9px;font-weight:800;color:var(--sub);margin-bottom:4px">📝 ANOTACIONES</div><div id="anl"><span style="font-size:10px;color:var(--g400)">Cargando...</span></div>`;if(esMio||esP)b+=`<div class="ainp"><textarea id="ant" placeholder="Agregar anotación..."></textarea><button class="bt bsm bp" onclick="addA('${idInm}')">+</button></div>`;b+=`</div>`;
+/* GESTIÓN ESTADO */
+if(canEdit){const useESTS=esMio&&!esP?PCOLS.filter(c=>c.id!=='Verificar Disponibilidad'):PCOLS;b+=`<div class="msc"><div class="msct">⚙️ Estado</div><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap"><select class="esel" onchange="chgE('${idInm}',this.value)">${useESTS.map(e=>`<option ${e.id===est?'selected':''}>${e.id}</option>`).join('')}</select><button class="bt bsm bgr" onclick="confD('${idInm}')">✓ Confirmar</button></div></div>`;}
+if(!canEdit&&U&&U.rol==='asesor'){const curEst=est;if(curEst!=='Verificar Disponibilidad')b+=`<div style="margin-top:8px"><button class="bt bp" style="width:100%" onclick="verificarInm('${idInm}');cm()">🔍 Verificar disponibilidad</button></div>`;else b+=`<div style="margin-top:8px;padding:8px;background:var(--goldbg);border:1px solid var(--yb);border-radius:6px;font-size:10px;text-align:center;color:#92400e;font-weight:700">⏳ En verificación</div>`;}
+/* ANOTACIONES */
+b+=`<div class="abx"><div style="font-size:9px;font-weight:800;color:var(--sub);margin-bottom:4px">📝 ANOTACIONES</div><div id="anl"><span style="font-size:10px;color:var(--g400)">Cargando...</span></div>`;if(canEdit)b+=`<div class="ainp"><textarea id="ant" placeholder="Agregar anotación..."></textarea><button class="bt bsm bp" onclick="addA('${idInm}')">+</button></div>`;b+=`</div>`;
 document.getElementById('mbd').innerHTML=b;document.getElementById('mdl').style.display='flex';document.body.style.overflow='hidden';ldAn(idInm);}
 function cm(){document.getElementById('mdl').style.display='none';document.body.style.overflow='';}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')cm();});
-async function savePrice(id,oldV,oldA){const nv=+(document.getElementById('mpv').value||0),na=+(document.getElementById('mpa').value||0);const cambios={};if(nv!==oldV)cambios['Precio de Venta']=nv;if(na!==oldA)cambios['Precio de Arriendo']=na;if(!Object.keys(cambios).length){toast('Sin cambios','twarn');return;}const r=await aP({action:'editarInmueble',id_inmueble:id,cambios:cambios});if(r&&r.success){toast('✅ Precio actualizado');load();cm();}else toast(r?r.message:'Error','terr');}
+/* SAVE ALL FIELDS */
+async function saveAll(id){const cambios={};
+const map=[['me_tipo','Tipo de Inmueble'],['me_neg','Tipo de Negociación'],['me_dir','DIRECCION'],['me_ciu','UBICACIÓN CIUDAD'],['me_est','Estrato'],['me_pv','Precio de Venta'],['me_pa','Precio de Arriendo'],['me_hab','Habitaciones'],['me_ban','baños'],['me_area','Área construida (m²)'],['me_parq','Parqueaderos'],['me_carac','Casillas de verificación'],['me_prop','Contacto (Propietario)'],['me_tel','Teléfono'],['me_email','Email'],['me_obs','Observaciones']];
+map.forEach(([elId,col])=>{const el=document.getElementById(elId);if(el){const v=el.tagName==='TEXTAREA'?el.value:el.value;if(v!==undefined&&v!=='')cambios[col]=v;}});
+if(!Object.keys(cambios).length){toast('Sin cambios','twarn');return;}
+const r=await aP({action:'editarInmueble',id_inmueble:id,cambios:cambios});if(r&&r.success){toast('✅ Inmueble actualizado');load();cm();}else toast(r?r.message:'Error','terr');}
 async function chgE(id,e){if(FINAL_STATES.includes(e)){const ok=await cfShow(e==='Arrendado'?'🔑':e==='Vendido'?'💰':'⛔','¿Cambiar a '+e+'?','Genera alertas a todo el equipo');if(!ok)return;}const r=await aP({action:'actualizarEstado',id_inmueble:id,nuevo_estado:e});if(r&&r.success){toast('✅ Estado: '+e);load();cm();}else toast(r?r.message:'Error','terr');}
 async function confD(id){const r=await aP({action:'confirmarDisponibilidad',id_inmueble:id});if(r&&r.success){toast('✅ Confirmado');load();cm();}else toast(r?r.message:'Error','terr');}
 async function ldAn(id){const r=await aG('getAnotaciones&id_inmueble='+id);const el=document.getElementById('anl');if(!r||!r.data||!r.data.length){el.innerHTML='<span style="font-size:10px;color:var(--g400)">Sin anotaciones</span>';return;}el.innerHTML=r.data.map(a=>{const f=a.fecha?new Date(a.fecha):null;const fs=f?f.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';return`<div class="ait"><div class="aim"><b>👤 ${a.nombre}</b> · ${fs}</div>${a.texto}</div>`;}).join('');}

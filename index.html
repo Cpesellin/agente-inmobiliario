@@ -419,11 +419,30 @@ document.querySelectorAll('.pcol').forEach(c=>{c.addEventListener('dragover',e=>
 function scrollToCol(i){const cols=document.querySelectorAll('.pcol');if(cols[i])cols[i].scrollIntoView({behavior:'smooth',block:'nearest',inline:'start'});}
 function dStart(e,id){e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move';const card=document.getElementById('pkc-'+id);if(card)card.classList.add('dragging');}
 async function quickMove(id,estado){if(!id||!estado)return;if(FINAL_STATES.includes(estado)){const ok=await cfShow(estado==='Arrendado'?'🔑':estado==='Vendido'?'💰':'⛔','¿Mover a '+estado+'?','Genera alertas a todo el equipo');if(!ok)return;}
+const p=findInm(id);const desc=descInm(p);const capNom=p&&p.captador?p.captador.nombre:'?';const capEmail=p&&p.captador?(p.captador.usuario||p.captador.email):'';
 const card=document.getElementById('pkc-'+id);const targetCol=document.querySelector(`.pcol[data-estado="${estado}"] .pcb`);if(card&&targetCol){card.classList.remove('dragging');targetCol.prepend(card);document.querySelectorAll('.pcol').forEach(c=>{const n=c.querySelector('.pcb').children.length;const cc=c.querySelector('.pcc');if(cc)cc.textContent=n;});toast('✅ Movido a '+estado);}
 const{error}=await SB.from('inmuebles').update({estado,fecha_estado:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);
 await SB.from('historial').insert({inmueble_id:id,usuario_id:U.id,accion:'cambio_estado',campo:'estado',valor_nuevo:estado});
+/* ALERTAS */
+if(estado==='Verificar Disponibilidad'){
+await noti('verificar','rojo','🔍 '+U.nombre+' solicita verificar: '+desc,U.nombre+' necesita saber si tu '+desc+' sigue disponible. Responde lo antes posible.',capEmail,null,id);
+await noti('verificar','rojo','🔍 Verificación solicitada: '+desc,U.nombre+' → '+capNom+': ¿'+desc+' sigue disponible?',null,'admin',id);
+}else if(estado==='Aún Disponible'){
+await noti('cambio_estado','verde','✅ '+capNom+' confirmó: '+desc+' sigue disponible',capNom+' verificó que su '+desc+' está disponible.',null,'all',id);
+}else if(estado==='Retirado'&&p&&p.estado==='Verificar Disponibilidad'){
+await noti('cambio_estado','rojo','❌ '+capNom+' reportó: '+desc+' ya no disponible',capNom+' indicó que su '+desc+' fue retirado.',null,'all',id);
+}else if(FINAL_STATES.includes(estado)){
+const ico=estado==='Arrendado'?'🔑':estado==='Vendido'?'💰':'⛔';
+await noti('cambio_estado','verde',ico+' Cierre: '+desc+' → '+estado,U.nombre+' movió '+desc+' a '+estado+'.',null,'all',id);
+await noti('cambio_estado','verde',ico+' CIERRE por '+U.nombre+': '+desc,U.nombre+' cerró '+desc+' como '+estado+'. Captador: '+capNom,null,'admin',id);
+}else{
+await noti('cambio_estado','info','🔄 '+desc+' → '+estado,U.nombre+' movió '+desc+' a '+estado+'.',null,'all',id);}
 if(error){toast('❌ Error — revirtiendo','terr');}load();}
 async function reVal(id){const{error}=await SB.from('inmuebles').update({fecha_estado:new Date().toISOString(),ultima_confirmacion:new Date().toISOString()}).eq('id',id);if(!error){toast('✅ Timer reiniciado');load();}else toast('Error','terr');}
+/* ALERTAS GENERATOR */
+async function noti(tipo,nivel,titulo,mensaje,paraEmail,paraRol,inmId){try{await SB.from('alertas').insert({tipo,nivel,titulo,mensaje,para_email:paraEmail||null,para_rol:paraRol||null,inmueble_id:inmId||null,de_usuario:U.id});}catch(e){}}
+function descInm(p){if(!p)return'inmueble';return(p.tipo||'Inmueble')+' en '+(p.ciudad||'?');}
+function findInm(id){return D.find(p=>p.id===id);}
 async function verificarInm(id){const ok=await cfShow('🔍','¿Verificar disponibilidad?','Se enviará una solicitud urgente al asesor captador para que confirme si este inmueble sigue disponible.');if(!ok)return;await quickMove(id,'Verificar Disponibilidad');}
 /* GALLERY & CAROUSEL SYSTEM */
 let _galFotos=[],_galIdx=0;
@@ -507,12 +526,29 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')cm();});
 async function saveAll(id){const cambios={};const map=[['me_tipo','tipo'],['me_neg','negociacion'],['me_dir','direccion'],['me_ciu','ciudad'],['me_est','estrato'],['me_pv','precio_venta'],['me_pa','precio_arriendo'],['me_hab','habitaciones'],['me_ban','banos'],['me_area','area_construida'],['me_parq','parqueaderos'],['me_carac','caracteristicas'],['me_prop','propietario_nombre'],['me_tel','propietario_telefono'],['me_email','propietario_email'],['me_obs','observaciones'],['me_m2','url_metrocuadrado'],['me_fr','url_fincaraiz']];
 map.forEach(([elId,col])=>{const el=document.getElementById(elId);if(el){const v=el.tagName==='TEXTAREA'?el.value:el.value;if(v!==undefined){if(['precio_venta','precio_arriendo','area_construida','habitaciones','banos','parqueaderos'].includes(col))cambios[col]=v?parseFloat(v)||null:null;else if(['url_metrocuadrado','url_fincaraiz'].includes(col))cambios[col]=v||null;else if(v!=='')cambios[col]=v;}}});
 cambios.updated_at=new Date().toISOString();
-const{error}=await SB.from('inmuebles').update(cambios).eq('id',id);if(!error){if(_pendingFotos.length>0){await saveFotosToInmueble(id,_pendingFotos);_pendingFotos=[];}toast('✅ Inmueble actualizado');load();cm();}else toast('Error: '+error.message,'terr');}
-async function chgE(id,e){if(FINAL_STATES.includes(e)){const ok=await cfShow(e==='Arrendado'?'🔑':e==='Vendido'?'💰':'⛔','¿Cambiar a '+e+'?','Genera alertas a todo el equipo');if(!ok)return;}await SB.from('inmuebles').update({estado:e,fecha_estado:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);toast('✅ Estado: '+e);load();cm();}
+const p=findInm(id);const desc=descInm(p);
+const{error}=await SB.from('inmuebles').update(cambios).eq('id',id);if(!error){
+if(_pendingFotos.length>0){await saveFotosToInmueble(id,_pendingFotos);_pendingFotos=[];}
+/* Alertas de precio */
+if(p){const oldPV=p.precio_venta||0,oldPA=p.precio_arriendo||0,newPV=cambios.precio_venta!==undefined?cambios.precio_venta||0:oldPV,newPA=cambios.precio_arriendo!==undefined?cambios.precio_arriendo||0:oldPA;
+if(newPV!==oldPV&&(newPV>0||oldPV>0)){await noti('cambio_precio','rojo','💲 Precio venta cambió: '+desc,U.nombre+' cambió precio de '+desc+': '+fm(oldPV)+' → '+fm(newPV),null,'all',id);await noti('actualizar_portal','amarillo','🌐 Actualizar portales: '+desc,'Precio de venta cambió en '+desc+'. Verificar M² y FR.',null,'admin',id);}
+if(newPA!==oldPA&&(newPA>0||oldPA>0)){await noti('cambio_precio','rojo','💲 Precio arriendo cambió: '+desc,U.nombre+' cambió arriendo de '+desc+': '+fm(oldPA)+' → '+fm(newPA),null,'all',id);await noti('actualizar_portal','amarillo','🌐 Actualizar portales: '+desc,'Precio de arriendo cambió en '+desc+'. Verificar M² y FR.',null,'admin',id);}}
+toast('✅ Inmueble actualizado');load();cm();}else toast('Error: '+error.message,'terr');}
+async function chgE(id,e){if(FINAL_STATES.includes(e)){const ok=await cfShow(e==='Arrendado'?'🔑':e==='Vendido'?'💰':'⛔','¿Cambiar a '+e+'?','Genera alertas a todo el equipo');if(!ok)return;}
+const p=findInm(id);const desc=descInm(p);const capNom=p&&p.captador?p.captador.nombre:'?';
+await SB.from('inmuebles').update({estado:e,fecha_estado:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);
+await SB.from('historial').insert({inmueble_id:id,usuario_id:U.id,accion:'cambio_estado',campo:'estado',valor_nuevo:e});
+if(FINAL_STATES.includes(e)){const ico=e==='Arrendado'?'🔑':e==='Vendido'?'💰':'⛔';await noti('cambio_estado','verde',ico+' Cierre: '+desc+' → '+e,U.nombre+' cerró '+desc+' como '+e+'. Captador: '+capNom,null,'all',id);await noti('cambio_estado','verde',ico+' CIERRE: '+desc+' por '+U.nombre,U.nombre+' cerró '+desc+'. Captador: '+capNom,null,'admin',id);}
+else{await noti('cambio_estado','info','🔄 '+desc+' → '+e,U.nombre+' cambió estado de '+desc+' a '+e,null,'all',id);}
+toast('✅ Estado: '+e);load();cm();}
 async function confD(id){await SB.from('inmuebles').update({ultima_confirmacion:new Date().toISOString(),fecha_estado:new Date().toISOString()}).eq('id',id);toast('✅ Confirmado');load();cm();}
 async function ldAn(id){const{data}=await SB.from('anotaciones').select('*,autor:usuarios!usuario_id(nombre)').eq('inmueble_id',id).order('created_at',{ascending:false});const el=document.getElementById('anl');if(!data||!data.length){el.innerHTML='<span style="font-size:10px;color:var(--g400)">Sin anotaciones</span>';return;}el.innerHTML=data.map(a=>{const f=a.created_at?new Date(a.created_at).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';return`<div class="ait"><div class="aim"><b>👤 ${a.autor?a.autor.nombre:'?'}</b> · ${f}</div>${a.texto}</div>`;}).join('');}
 async function addA(id){const t=document.getElementById('ant').value.trim();if(!t)return;await SB.from('anotaciones').insert({inmueble_id:id,usuario_id:U.id,texto:t});await SB.from('inmuebles').update({fecha_estado:new Date().toISOString(),ultima_confirmacion:new Date().toISOString()}).eq('id',id);document.getElementById('ant').value='';toast('📝 Nota guardada + timer reiniciado');ldAn(id);load();}
-async function eliminarInm(id){const ok=await cfShow('🗑️','¿Eliminar este inmueble?','Se moverá a la papelera. Puedes restaurarlo después.');if(!ok)return;await SB.from('inmuebles').update({eliminado:true,eliminado_por:U.id,fecha_eliminacion:new Date().toISOString()}).eq('id',id);await SB.from('historial').insert({inmueble_id:id,usuario_id:U.id,accion:'eliminacion'});toast('🗑️ Enviado a papelera');load();cm();}
+async function eliminarInm(id){const ok=await cfShow('🗑️','¿Eliminar este inmueble?','Se moverá a la papelera. Puedes restaurarlo después.');if(!ok)return;
+const p=findInm(id);const desc=descInm(p);const capNom=p&&p.captador?p.captador.nombre:'?';
+await SB.from('inmuebles').update({eliminado:true,eliminado_por:U.id,fecha_eliminacion:new Date().toISOString()}).eq('id',id);await SB.from('historial').insert({inmueble_id:id,usuario_id:U.id,accion:'eliminacion'});
+await noti('cambio_estado','rojo','🗑️ Inmueble eliminado: '+desc,U.nombre+' eliminó '+desc+'. Captador: '+capNom,null,'admin',id);
+toast('🗑️ Enviado a papelera');load();cm();}
 async function restaurarInm(id){await SB.from('inmuebles').update({eliminado:false,eliminado_por:null,fecha_eliminacion:null}).eq('id',id);await SB.from('historial').insert({inmueble_id:id,usuario_id:U.id,accion:'restauracion'});toast('✅ Restaurado');rPapelera();load();}
 async function rPapelera(){const el=document.getElementById('papc');const{data}=await SB.from('inmuebles').select('*,captador:usuarios!captador_id(nombre)').eq('eliminado',true).order('fecha_eliminacion',{ascending:false});if(!data||!data.length){el.innerHTML='<div class="emp"><span class="emp-i">✅</span><h3>Papelera vacía</h3></div>';return;}el.innerHTML=data.map(p=>`<div style="display:flex;gap:10px;align-items:center;padding:12px;background:var(--cd);border:1.5px solid var(--brd);border-left:4px solid var(--red);border-radius:10px;margin-bottom:6px"><span style="font-size:20px">${emo(p.tipo)}</span><div style="flex:1"><div style="font-size:13px;font-weight:700">${p.tipo} · ${p.ciudad}</div><div style="font-size:11px;color:var(--sub)">👤 ${p.captador?p.captador.nombre:'?'} · Eliminado ${p.fecha_eliminacion?new Date(p.fecha_eliminacion).toLocaleDateString('es-CO'):''}</div></div><button class="bt bsm bgr" onclick="restaurarInm('${p.id}')">♻️ Restaurar</button></div>`).join('');}
 /* BELL */
@@ -549,7 +585,10 @@ if(specs)h+=`<div style="font-size:10px;color:var(--sub);margin-top:2px">${specs
 h+=`</div></div>`;
 h+=`<div class="ptl-links" style="margin-top:8px"><div class="ptl-link"><span class="ptl-logo m2">M²</span>${hasM2?`<span class="ptl-url"><a href="${p.url_metrocuadrado}" target="_blank">Ver →</a></span>${canEditPrt?`<button class="ptl-btn ptl-edit" onclick="sPrt('${p.id}','url_metrocuadrado')">✏️</button>`:''}`:(canEditPrt?`<span class="ptl-url" style="color:var(--red);font-weight:700">⏳ Pendiente</span><button class="ptl-btn ptl-add" onclick="sPrt('${p.id}','url_metrocuadrado')">+ Enlace</button>`:`<span class="ptl-url" style="color:var(--red)">⏳ Pendiente</span>`)}</div>`;
 h+=`<div class="ptl-link"><span class="ptl-logo fr">FR</span>${hasFR?`<span class="ptl-url"><a href="${p.url_fincaraiz}" target="_blank">Ver →</a></span>${canEditPrt?`<button class="ptl-btn ptl-edit" onclick="sPrt('${p.id}','url_fincaraiz')">✏️</button>`:''}`:(canEditPrt?`<span class="ptl-url" style="color:var(--red);font-weight:700">⏳ Pendiente</span><button class="ptl-btn ptl-add" onclick="sPrt('${p.id}','url_fincaraiz')">+ Enlace</button>`:`<span class="ptl-url" style="color:var(--red)">⏳ Pendiente</span>`)}</div></div></div>`;});el.innerHTML=h;}
-async function sPrt(id,field){const u=prompt('Pega el enlace del portal:');if(!u)return;await SB.from('inmuebles').update({[field]:u,updated_at:new Date().toISOString()}).eq('id',id);toast('✅ Portal actualizado');load();rPort();}
+async function sPrt(id,field){const u=prompt('Pega el enlace del portal:');if(!u)return;await SB.from('inmuebles').update({[field]:u,updated_at:new Date().toISOString()}).eq('id',id);
+const p=findInm(id);const desc=descInm(p);const capEmail=p&&p.captador?(p.captador.usuario||p.captador.email):'';const portal=field==='url_metrocuadrado'?'Metrocuadrado':'Fincaraíz';
+await noti('portal_listo','verde','🌐 '+desc+' ya está en '+portal,U.nombre+' subió '+desc+' a '+portal+'.',capEmail,null,id);
+toast('✅ Portal actualizado');load();rPort();}
 /* DASHBOARD */
 async function rDash(){const el=document.getElementById('dsc');el.innerHTML='<div class="ldr"><div class="lds"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div></div>';if(U.rol==='admin'||U.rol==='oficina')rDashAdmin(el);else rDashAsesor(el);}
 function rDashAsesor(el){const my=MIS;const total=my.length;const colC={};PCOLS.forEach(col=>{colC[col.id]=my.filter(p=>p.estado===col.id||(col.id==='Disponible'&&(!p.estado||p.estado==='Disponible'))).length;});
@@ -614,7 +653,11 @@ function fPr(){if(fS>1){fS--;rFS();}}
 async function fNx(){if(fS<5){fS++;rFS();return;}document.getElementById('fn').disabled=true;document.getElementById('fn').textContent='Enviando...';fSaveMem();
 const neg=fD.negociacion==='AMBAS'?'Venta y Arriendo':fD.negociacion==='VENTA'?'Venta':'Arriendo';
 const{data:newInm,error}=await SB.from('inmuebles').insert({captador_id:U.id,tipo:fD.tipo,negociacion:neg,direccion:fD.direccion,ciudad:fD.ciudad,barrio:fD.barrio,precio_venta:fD.precioVenta?parseFloat(fD.precioVenta):null,precio_arriendo:fD.precioArriendo?parseFloat(fD.precioArriendo):null,area_construida:fD.area?parseFloat(fD.area):null,estrato:fD.estrato?String(fD.estrato):null,habitaciones:fD.habitaciones||null,banos:fD.banos||null,parqueaderos:fD.parqueos||null,caracteristicas:fD.amenidades.join(', '),observaciones:fD.observaciones,propietario_nombre:fD.nombre,propietario_telefono:fD.telefono,propietario_email:fD.email,fecha_vencimiento_aut:fD.fecha_vencimiento_autorizacion||null,estado:'Disponible'}).select().single();
-if(!error&&newInm){if(_pendingFotos.length>0){await saveFotosToInmueble(newInm.id,_pendingFotos);_pendingFotos=[];}toast('✅ Inmueble registrado'+(fD.precioVenta||fD.precioArriendo?' con fotos':''));const lastC=fD.ciudad,lastT=fD.tipo;Object.assign(fD,{tipo:lastT,negociacion:'VENTA',precioVenta:'',precioArriendo:'',direccion:'',ciudad:lastC,barrio:'',nombre:'',telefono:'',email:'',area:120,estrato:0,habitaciones:3,banos:2,parqueos:1,caracteristicas:[],amenidades:[],observaciones:'',fecha_vencimiento_autorizacion:''});fS=1;rFS();load();go('inv');}else toast(error?error.message:'Error','terr');document.getElementById('fn').disabled=false;document.getElementById('fn').textContent='✓ Publicar';}
+if(!error&&newInm){if(_pendingFotos.length>0){await saveFotosToInmueble(newInm.id,_pendingFotos);_pendingFotos=[];}
+const desc2=(fD.tipo||'Inmueble')+' en '+(fD.ciudad||'?');const precio=fD.precioVenta?fm(+fD.precioVenta):fD.precioArriendo?fm(+fD.precioArriendo)+'/mes':'Sin precio';
+await noti('inmueble_nuevo','info','🆕 '+U.nombre+' registró: '+desc2,U.nombre+' registró nuevo '+desc2+'. '+precio,null,'all',newInm.id);
+await noti('inmueble_nuevo','info','📋 Nuevo inmueble: '+desc2+' — Revisar',U.nombre+' registró '+desc2+'. '+precio+'. Pendiente subir a portales.',null,'admin',newInm.id);
+toast('✅ Inmueble registrado');const lastC=fD.ciudad,lastT=fD.tipo;Object.assign(fD,{tipo:lastT,negociacion:'VENTA',precioVenta:'',precioArriendo:'',direccion:'',ciudad:lastC,barrio:'',nombre:'',telefono:'',email:'',area:120,estrato:0,habitaciones:3,banos:2,parqueos:1,caracteristicas:[],amenidades:[],observaciones:'',fecha_vencimiento_autorizacion:''});fS=1;rFS();load();go('inv');}else toast(error?error.message:'Error','terr');document.getElementById('fn').disabled=false;document.getElementById('fn').textContent='✓ Publicar';}
 function sWA(idx){const p=D[idx];if(!p)return;let m='*🏠 Inmobiliaria House*\n\n*'+p.tipo+'*\n📍 '+(p.ciudad||'')+(p.direccion?' · '+p.direccion:'')+'\n';if(p.precio_venta>0)m+='💰 Venta: '+fm(p.precio_venta)+'\n';if(p.precio_arriendo>0)m+='🔑 Arriendo: '+fm(p.precio_arriendo)+'/mes\n';m+='\n📲 wa.me/573105922763\n_Inmobiliaria House - Pereira_';window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank');}
 /* SHARE */
 function shareInm(id){const url=window.location.origin+window.location.pathname+'?ver='+id;if(navigator.share){navigator.share({title:'Inmueble — Inmobiliaria House',url}).catch(()=>{});}else{navigator.clipboard.writeText(url).then(()=>toast('📋 Enlace copiado')).catch(()=>{prompt('Copia este enlace:',url);});}}
